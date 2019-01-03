@@ -465,6 +465,9 @@ class Robo {
         let newArea = this.area.filter(x => x !== target);
         let result = checkRoboGuess(target);
         this.area = newArea;
+        if (this.area.length < 40) {
+            this.area = this.considerArea(this.area);
+        }
 
         for (let [name, status] of result.entries()) {
             // console.log(`${name}: ${status}`);
@@ -627,7 +630,73 @@ class Robo {
         }
         return false;
     }
-        
+
+    considerArea() {
+        const area =
+            this.area.filter(x => 
+                 (this.hasX(x) || this.hasL(x) || this.hasR(x) ||
+                        this.hasY(x) || this.hasU(x) || this.hasD(x) )
+            );
+        return area;
+    }
+
+    hasX(ele) {
+        const p = this.area.indexOf(ele);
+        if (this.area.indexOf(this.orgArea.indexOf(p-7)) &&
+            this.area.indexOf(this.orgArea.indexOf(p+7))) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+    hasL(ele) {
+        const p = this.area.indexOf(ele);
+        if (this.area.indexOf(this.orgArea.indexOf(p-7)) &&
+            this.area.indexOf(this.orgArea.indexOf(p-14))) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+    hasR(ele) {
+        const p = this.area.indexOf(ele);
+        if (this.area.indexOf(this.orgArea.indexOf(p+7)) &&
+            this.area.indexOf(this.orgArea.indexOf(p+14))) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+    hasY(ele) {
+        const p = this.area.indexOf(ele);
+        if (this.area.indexOf(this.orgArea.indexOf(p-1)) &&
+            this.area.indexOf(this.orgArea.indexOf(p+1))) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+    hasU(ele) {
+        const p = this.area.indexOf(ele);
+        if (this.area.indexOf(this.orgArea.indexOf(p-1)) &&
+            this.area.indexOf(this.orgArea.indexOf(p-2))) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+    hasD(ele) {
+        const p = this.area.indexOf(ele);
+        if (this.area.indexOf(this.orgArea.indexOf(p+1)) &&
+            this.area.indexOf(this.orgArea.indexOf(p+2))) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    
+            
 }
 
 function roboPlay() {
