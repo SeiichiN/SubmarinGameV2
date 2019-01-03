@@ -1,0 +1,25 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.8	//
+DotCom	oneGame.js	/^    DotCom.prototype =  {$/;"	c
+DotCom.checkYourself	oneGame.js	/^        checkYourself: function(guess) {$/;"	m
+DotCom.setLocationCells	oneGame.js	/^        setLocationCells: function(locs) {$/;"	m
+Robo	oneGame.js	/^    function Robo() {$/;"	c
+Robo.attack	oneGame.js	/^        attack: function(){$/;"	m
+Robo.setArea	oneGame.js	/^        setArea: function() {$/;"	m
+areaMax	oneGame.js	/^    var areaMax = 7;$/;"	v
+checkRoboGuess	submarinGame.js	/^function checkRoboGuess(guess) {$/;"	f
+checkUsedCell	submarinGame.js	/^function checkUsedCell(cell) {$/;"	f
+checkYourGuess	submarinGame.js	/^function checkYourGuess(guess) {$/;"	f
+howto	submarinGame.js	/^function howto() {$/;"	f
+idx	play.php	/^                                <?php $idx = mb_substr("ABCDEFG", ($j-1), 1) . (String)$i; ?>$/;"	v
+init	submarinGame.js	/^function init() {$/;"	f
+initCells	submarinGame.js	/^function initCells() {$/;"	f
+play	submarinGame.js	/^function play() {$/;"	f
+reformattedArray	sample.js	/^var reformattedArray = kvArray.map(obj => {$/;"	v
+roboInit	submarinGame.js	/^function roboInit() {$/;"	f
+roboPlay	submarinGame.js	/^function roboPlay() {$/;"	f
+selection	submarinGame.js	/^function selection(cell) {$/;"	f

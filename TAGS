@@ -1,0 +1,31 @@
+
+simpleGame.js,0
+
+play.php,106
+                                <?php $idx = mb_substr("ABCDEFG", ($j-1), 1) . (String)$i; ?>idx44,1802
+
+oneGame.js,353
+    DotCom.prototype =  {DotCom9,162
+        setLocationCells: function(locs) {DotCom.setLocationCells11,302
+        checkYourself: function(guess) {DotCom.checkYourself21,566
+    function Robo() {Robo60,1471
+        setArea: function() {Robo.setArea65,1572
+        attack: function(){Robo.attack73,1740
+    var areaMax = 7;areaMax89,2197
+
+sample.js,66
+var reformattedArray = kvArray.map(obj => {reformattedArray7,94
+
+submarinGame.js,438
+function checkYourGuess(guess) {checkYourGuess151,5337
+function checkUsedCell(cell) {checkUsedCell178,6065
+function selection(cell) {selection196,6493
+function play() {play260,8501
+function initCells() {initCells278,8920
+function init() {init293,9253
+function roboInit() {roboInit331,10391
+function checkRoboGuess(guess) {checkRoboGuess359,11181
+function roboPlay() {roboPlay418,12688
+function howto() {howto423,12770
+
+sample2.js,0

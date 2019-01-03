@@ -1,0 +1,86 @@
+@charset "UTF-8";
+
+.clearfix:after {
+    content: "";
+    display: block;
+    clear: both;
+}
+#wrap {
+    position: relative;
+}
+
+.des {
+    display: none;
+    background-color: #eee;
+    z-index: 2;
+	position: absolute;
+    border: solid 1px #ccc;
+    padding: 5px;
+    box-sizing: border-box;
+}
+.des header {
+    margin-bottom: 0.4em;
+}
+
+.des h1 {
+    margin: 0;
+}
+#close-des {
+    width: 35px;
+    float: right;
+    cursor: pointer;
+    margin-top: -10px;
+}
+.des p {
+    line-height: 1.3;
+    margin: 0;
+    font-size: 14px;
+}
+#howto-btn {
+    cursor: pointer;
+}
+
+
+.select {
+    cursor: pointer;
+}
+
+table {
+    border-collapse: collapse;
+}
+
+th, td {
+    width: 35px;
+    height: 35px;
+}
+
+td {
+    text-align: center;
+    border: solid 1px #aaa;
+}
+
+.score {
+    height: 120px;
+}
+
+#replay {
+    margin-top: 10px;
+    display: none;
+}
+
+@media screen and (min-width: 768px) {
+    #wrap {
+        width: 300px;
+        margin: 0 auto;
+    }
+    .des {
+        right: -200px;
+        width: 200px;
+    }
+    #howto-btn {
+        position: absolute;
+        right: -120px;
+        top: 0px;
+    }
+
+}
