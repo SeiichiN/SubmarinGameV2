@@ -579,6 +579,11 @@ class Robo {
         return this.area.find(x => x === target);
     }
 
+    /**
+     * Get Next Target -- 次の攻撃目標（セル）を得る
+     *
+     * 次の攻撃セルが this.area の中に存在していることが必要
+     */
     getNextTarget(newTarget) {
         if (newTarget && this.existTarget(newTarget)) {
             return newTarget;
@@ -588,45 +593,37 @@ class Robo {
     }
 
     leftCell(target) {
-        const alpha = target.substr(0, 1);
-        const suuji = target.substr(1, 1);
-        if (alpha !== 'A') {
-            const val = ALPHABET.indexOf(alpha) -1;
-            const al = ALPHABET.substr(val, 1);
-            return al.toString() + suuji;
+        const indexTarget = this.orgArea.indexOf(target);
+        const newIndex = indexTarget - 7;
+        if (newIndex >= 0) {
+            return this.orgArea[newIndex];
         }
         return false;
-        
-        // console.log(ALPHABET.indexOf(alpha));
     }
 
     rightCell(target) {
-        const alpha = target.substr(0, 1);
-        const suuji = target.substr(1, 1);
-        if (alpha !== 'G') {
-            const val = ALPHABET.indexOf(alpha) +1;
-            const al = ALPHABET.substr(val, 1);
-            return al.toString() + suuji;
+        const indexTarget = this.orgArea.indexOf(target);
+        const newIndex = indexTarget + 7;
+        if (newIndex < 49) {
+            return this.orgArea[newIndex];
         }
         return false;
     }
 
     upperCell(target) {
-        const alpha = target.substr(0, 1);
-        const suuji = target.substr(1, 1);
-        if (suuji !== '1') {
-            const num = parseInt(suuji) -1;
-            return alpha + num.toString();
+        const indexTarget = this.orgArea.indexOf(target);
+        const newIndex = indexTarget - 1;
+        if (newIndex >= 0) {
+            return this.orgArea[newIndex];
         }
         return false;
     }
         
     lowerCell(target) {
-        const alpha = target.substr(0, 1);
-        const suuji = target.substr(1, 1);
-        if (suuji !== '7') {
-            const num = parseInt(suuji) +1;
-            return alpha + num.toString();
+        const indexTarget = this.orgArea.indexOf(target);
+        const newIndex = indexTarget + 1;
+        if (newIndex < 49) {
+            return this.orgArea[newIndex];
         }
         return false;
     }
