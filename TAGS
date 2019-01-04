@@ -1,6 +1,4 @@
 
-simpleGame.js,0
-
 play.php,106
                                 <?php $idx = mb_substr("ABCDEFG", ($j-1), 1) . (String)$i; ?>idx44,1802
 
@@ -13,19 +11,14 @@ oneGame.js,353
         attack: function(){Robo.attack73,1740
     var areaMax = 7;areaMax89,2197
 
-sample.js,66
-var reformattedArray = kvArray.map(obj => {reformattedArray7,94
-
-submarinGame.js,438
+submarinGame.js,440
 function checkYourGuess(guess) {checkYourGuess151,5337
 function checkUsedCell(cell) {checkUsedCell178,6065
 function selection(cell) {selection196,6493
-function play() {play260,8501
-function initCells() {initCells278,8920
-function init() {init293,9253
-function roboInit() {roboInit331,10391
-function checkRoboGuess(guess) {checkRoboGuess359,11181
-function roboPlay() {roboPlay418,12688
-function howto() {howto423,12770
-
-sample2.js,0
+function play() {play297,9748
+function initCells() {initCells315,10167
+function init() {init330,10500
+function roboInit() {roboInit368,11638
+function checkRoboGuess(guess) {checkRoboGuess399,12499
+function roboPlay() {roboPlay736,24001
+function howto() {howto741,24077

@@ -396,10 +396,10 @@ function roboInit() {
 
 }
 
-function checkRoboGuess(guess) {
+function checkRoboGuess(gs) {
     roboNumOfGuess++;
 
-    guess = guess.toUpperCase();
+    let guess = gs.toUpperCase();
 
     let result = new Map();
 
@@ -453,15 +453,17 @@ class Robo {
     }
 
     attack () {
-        let target = ""
+        let target = "";
+        let index = 0;
+        
         if (this.lockOnMode) {
             target = this.newTarget;
         } else {
-            const length = this.area.length;                    // length = 49
-            let index = Math.floor(Math.random() * length);   // 0 〜 48
+            let length = this.area.length;                    // length = 49
+            index = Math.floor(Math.random() * length);   // 0 〜 48
             target = this.area[index];
         }
-        console.log(target);
+        // console.log('ind:' + index + ' targ:' + target);
         let newArea = this.area.filter(x => x !== target);
         let result = checkRoboGuess(target);
         this.area = newArea;
@@ -512,19 +514,19 @@ class Robo {
         switch (this.lockOnNum) {
             case 1:
                 if (newTarget = this.getNextTarget(this.leftCell(target))) {
-                    console.log('L' + this.lockOnNum +': ' + newTarget);
+                    // console.log('L' + this.lockOnNum +': ' + newTarget);
                     return newTarget;
                 } 
                 if (newTarget = this.getNextTarget(this.upperCell(target))) {
-                    console.log('U' + this.lockOnNum +': ' + newTarget);
+                    // console.log('U' + this.lockOnNum +': ' + newTarget);
                     return newTarget;
                 } 
                 if (newTarget = this.getNextTarget(this.rightCell(target))) {
-                    console.log('R' + this.lockOnNum +': ' + newTarget);
+                    // console.log('R' + this.lockOnNum +': ' + newTarget);
                     return newTarget;
                 } 
                 if (newTarget = this.getNextTarget(this.lowerCell(target))) {
-                    console.log('D' + this.lockOnNum +': ' + newTarget);
+                    // console.log('D' + this.lockOnNum +': ' + newTarget);
                     return newTarget;
                 }
                 break;
@@ -535,41 +537,41 @@ class Robo {
                 // console.log('1:' + firstIndex + ' 2:' + secondIndex);
                 if (firstIndex - secondIndex === 1) {
                     if (newTarget = this.getNextTarget(this.upperCell(this.secTarget))) {
-                        console.log('U' + this.lockOnNum +': ' + newTarget);
+                        // console.log('U' + this.lockOnNum +': ' + newTarget);
                         return newTarget;
                     }
                     if (newTarget = this.getNextTarget(this.lowerCell(this.orgTarget))) {
-                        console.log('D' + this.lockOnNum +': ' + newTarget);
+                        // console.log('D' + this.lockOnNum +': ' + newTarget);
                         return newTarget;
                     }
                 }
                 else if (firstIndex - secondIndex === -1) {
                     if (newTarget = this.getNextTarget(this.upperCell(this.orgTarget))) {
-                        console.log('U' + this.lockOnNum +': ' + newTarget);
+                        // console.log('U' + this.lockOnNum +': ' + newTarget);
                         return newTarget;
                     }
                     if (newTarget = this.getNextTarget(this.lowerCell(this.secTarget))) {
-                        console.log('D' + this.lockOnNum +': ' + newTarget);
+                        // console.log('D' + this.lockOnNum +': ' + newTarget);
                         return newTarget;
                     }
                 }
                 else if (firstIndex - secondIndex === 7) {
                     if (newTarget = this.getNextTarget(this.leftCell(this.secTarget))) {
-                        console.log('L' + this.lockOnNum +': ' + newTarget);
+                        // console.log('L' + this.lockOnNum +': ' + newTarget);
                         return newTarget;
                     }
                     if (newTarget = this.getNextTarget(this.rightCell(this.orgTarget))) {
-                        console.log('L' + this.lockOnNum +': ' + newTarget);
+                        // console.log('L' + this.lockOnNum +': ' + newTarget);
                         return newTarget;
                     }
                 }
                 else if (firstIndex - secondIndex === -7) {
                     if (newTarget = this.getNextTarget(this.leftCell(this.orgTarget))) {
-                        console.log('L' + this.lockOnNum +': ' + newTarget);
+                        // console.log('L' + this.lockOnNum +': ' + newTarget);
                         return newTarget;
                     }
                     if (newTarget = this.getNextTarget(this.rightCell(this.secTarget))) {
-                        console.log('L' + this.lockOnNum +': ' + newTarget);
+                        // console.log('L' + this.lockOnNum +': ' + newTarget);
                         return newTarget;
                     }
                 }
@@ -638,99 +640,70 @@ class Robo {
 					 this.hasR(x) || this.hasY(x) ||
 					 this.hasU(x) || this.hasD(x) )
 			);
-		console.log('consider:<' + area.length + "> " + area);
+		// console.log('consider:<' + area.length + "> " + area);
         return area;
     }
 
     hasX(ele) {
         const p = this.orgArea.indexOf(ele);
 		if (p-7 < 0 || p+7 > 48) return false;
-		//console.log(ele);
-        //console.log(p + 'x' + this.orgArea[p-7]);
-        //console.log(p + 'x' + this.orgArea[p+7]);
-        //console.log(p + 'x' + this.area.indexOf(this.orgArea[p-7]));
-        //console.log(p + 'x' + this.area.indexOf(this.orgArea[p+7]));
-        if (this.area.indexOf(this.orgArea.indexOf(p-7)) &&
-            this.area.indexOf(this.orgArea.indexOf(p+7))) {
-            return true;
-        } else {
+        if (this.area.indexOf(this.orgArea[p-7]) === -1 ||
+            this.area.indexOf(this.orgArea[p+7]) === -1 ) {
             return false;
+        } else {
+            return true;
         }
     }
     hasL(ele) {
         const p = this.orgArea.indexOf(ele);
 		if (p-7 < 0) return false;
-		//console.log(ele);
-        //console.log(p + 'L' + this.orgArea[p-7]);
-        //console.log(p + 'L' + this.orgArea[p-14]);
-        //console.log(p + 'L' + this.area.indexOf(this.orgArea[p-7]));
-        //console.log(p + 'L' + this.area.indexOf(this.orgArea[p-14]));
-        if (this.area.indexOf(this.orgArea[p-7]) &&
-            this.area.indexOf(this.orgArea[p-14])) {
-            return true;
-        } else {
+        if (this.area.indexOf(this.orgArea[p-7]) === -1 ||
+            this.area.indexOf(this.orgArea[p-14]) === -1 ) {
             return false;
+        } else {
+            return true;
         }
     }
     hasR(ele) {
         const p = this.orgArea.indexOf(ele);
 		if (p+7 > 48) return false;
-		//console.log(ele);
-        //console.log(p + 'R' + this.orgArea[p+7]);
-        //console.log(p + 'R' + this.orgArea[p+14]);
-        //console.log(p + 'R' + this.area.indexOf(this.orgArea[p+7]));
-        //console.log(p + 'R' + this.area.indexOf(this.orgArea[p+14]));
-        if (this.area.indexOf(this.orgArea[p+7]) &&
-            this.area.indexOf(this.orgArea[p+14])) {
-            return true;
-        } else {
+        if (this.area.indexOf(this.orgArea[p+7]) === -1 ||
+            this.area.indexOf(this.orgArea[p+14]) === -1 ) {
             return false;
+        } else {
+            return true;
         }
     }
     hasY(ele) {
         const p = this.orgArea.indexOf(ele);
 		if (p-1 < 0 || p+1 > 48) return false;
-		//console.log(ele);
-        //console.log(p + 'Y' + this.orgArea[p-1]);
-        //console.log(p + 'Y' + this.orgArea[p+1]);
-        //console.log(p + 'Y' + this.area.indexOf(this.orgArea[p-1]));
-        //console.log(p + 'Y' + this.area.indexOf(this.orgArea[p+1]));
-        if (this.area.indexOf(this.orgArea[p-1]) &&
-            this.area.indexOf(this.orgArea[p+1])) {
-            return true;
-        } else {
+        if (this.area.indexOf(this.orgArea[p-1]) === -1 ||
+            this.area.indexOf(this.orgArea[p+1]) === -1 ) {
             return false;
+        } else {
+            return true;
         }
     }
     hasU(ele) {
         const p = this.orgArea.indexOf(ele);
 		if (p-1 < 0) return false;
-		//console.log(ele);
-        //console.log(p + 'U' + this.area.indexOf(this.orgArea[p-1]));
-        //console.log(p + 'U' + this.area.indexOf(this.orgArea[p-2]));
-        if (this.area.indexOf(this.orgArea[p-1]) &&
-            this.area.indexOf(this.orgArea[p-2])) {
-            return true;
-        } else {
+        if (this.area.indexOf(this.orgArea[p-1]) === -1 ||
+            this.area.indexOf(this.orgArea[p-2]) === -1 ) {
             return false;
+        } else {
+            return true;
         }
     }
     hasD(ele) {
         const p = this.orgArea.indexOf(ele);
 		if (p+1 > 48) return false;
-		//console.log(ele);
-        //console.log(p + 'D' + this.area.indexOf(this.orgArea[p+1]));
-        //console.log(p + 'D' + this.area.indexOf(this.orgArea[p+2]));
-        if (this.area.indexOf(this.orgArea[p+1]) &&
-            this.area.indexOf(this.orgArea[p+2])) {
-            return true;
-        } else {
+        if (this.area.indexOf(this.orgArea[p+1]) === -1 ||
+            this.area.indexOf(this.orgArea[p+2]) === -1 ) {
             return false;
+        } else {
+            return true;
         }
     }
-
-    
-            
 }
 
 function roboPlay() {
