@@ -503,7 +503,7 @@ class Robo {
 //            console.log(this.newTarget);
         }
            
-        console.log(this.area);
+        console.log('this.area:' + this.area);
         return result;
     }
 
@@ -634,20 +634,22 @@ class Robo {
     considerArea() {
         const area =
             this.area.filter(x => 
-                 (this.hasX(x) || this.hasL(x) || this.hasR(x) || 
-				  this.hasY(x) || this.hasU(x) || this.hasD(x) )
-            );
+					(this.hasX(x) || this.hasL(x) ||
+					 this.hasR(x) || this.hasY(x) ||
+					 this.hasU(x) || this.hasD(x) )
+			);
+		console.log('consider:<' + area.length + "> " + area);
         return area;
     }
 
     hasX(ele) {
         const p = this.orgArea.indexOf(ele);
 		if (p-7 < 0 || p+7 > 48) return false;
-		console.log(ele);
-        console.log(p + 'x' + this.orgArea[p-7]);
-        console.log(p + 'x' + this.orgArea[p+7]);
-        console.log(p + 'x' + this.area.indexOf(this.orgArea[p-7]));
-        console.log(p + 'x' + this.area.indexOf(this.orgArea[p+7]));
+		//console.log(ele);
+        //console.log(p + 'x' + this.orgArea[p-7]);
+        //console.log(p + 'x' + this.orgArea[p+7]);
+        //console.log(p + 'x' + this.area.indexOf(this.orgArea[p-7]));
+        //console.log(p + 'x' + this.area.indexOf(this.orgArea[p+7]));
         if (this.area.indexOf(this.orgArea.indexOf(p-7)) &&
             this.area.indexOf(this.orgArea.indexOf(p+7))) {
             return true;
@@ -658,11 +660,11 @@ class Robo {
     hasL(ele) {
         const p = this.orgArea.indexOf(ele);
 		if (p-7 < 0) return false;
-		console.log(ele);
-        console.log(p + 'L' + this.orgArea[p-7]);
-        console.log(p + 'L' + this.orgArea[p-14]);
-        console.log(p + 'L' + this.area.indexOf(this.orgArea[p-7]));
-        console.log(p + 'L' + this.area.indexOf(this.orgArea[p-14]));
+		//console.log(ele);
+        //console.log(p + 'L' + this.orgArea[p-7]);
+        //console.log(p + 'L' + this.orgArea[p-14]);
+        //console.log(p + 'L' + this.area.indexOf(this.orgArea[p-7]));
+        //console.log(p + 'L' + this.area.indexOf(this.orgArea[p-14]));
         if (this.area.indexOf(this.orgArea[p-7]) &&
             this.area.indexOf(this.orgArea[p-14])) {
             return true;
@@ -673,11 +675,11 @@ class Robo {
     hasR(ele) {
         const p = this.orgArea.indexOf(ele);
 		if (p+7 > 48) return false;
-		console.log(ele);
-        console.log(p + 'R' + this.orgArea[p+7]);
-        console.log(p + 'R' + this.orgArea[p+14]);
-        console.log(p + 'R' + this.area.indexOf(this.orgArea[p+7]));
-        console.log(p + 'R' + this.area.indexOf(this.orgArea[p+14]));
+		//console.log(ele);
+        //console.log(p + 'R' + this.orgArea[p+7]);
+        //console.log(p + 'R' + this.orgArea[p+14]);
+        //console.log(p + 'R' + this.area.indexOf(this.orgArea[p+7]));
+        //console.log(p + 'R' + this.area.indexOf(this.orgArea[p+14]));
         if (this.area.indexOf(this.orgArea[p+7]) &&
             this.area.indexOf(this.orgArea[p+14])) {
             return true;
@@ -688,11 +690,11 @@ class Robo {
     hasY(ele) {
         const p = this.orgArea.indexOf(ele);
 		if (p-1 < 0 || p+1 > 48) return false;
-		console.log(ele);
-        console.log(p + 'Y' + this.orgArea[p-1]);
-        console.log(p + 'Y' + this.orgArea[p+1]);
-        console.log(p + 'Y' + this.area.indexOf(this.orgArea[p-1]));
-        console.log(p + 'Y' + this.area.indexOf(this.orgArea[p+1]));
+		//console.log(ele);
+        //console.log(p + 'Y' + this.orgArea[p-1]);
+        //console.log(p + 'Y' + this.orgArea[p+1]);
+        //console.log(p + 'Y' + this.area.indexOf(this.orgArea[p-1]));
+        //console.log(p + 'Y' + this.area.indexOf(this.orgArea[p+1]));
         if (this.area.indexOf(this.orgArea[p-1]) &&
             this.area.indexOf(this.orgArea[p+1])) {
             return true;
@@ -703,9 +705,9 @@ class Robo {
     hasU(ele) {
         const p = this.orgArea.indexOf(ele);
 		if (p-1 < 0) return false;
-		console.log(ele);
-        console.log(p + 'U' + this.area.indexOf(this.orgArea[p-1]));
-        console.log(p + 'U' + this.area.indexOf(this.orgArea[p-2]));
+		//console.log(ele);
+        //console.log(p + 'U' + this.area.indexOf(this.orgArea[p-1]));
+        //console.log(p + 'U' + this.area.indexOf(this.orgArea[p-2]));
         if (this.area.indexOf(this.orgArea[p-1]) &&
             this.area.indexOf(this.orgArea[p-2])) {
             return true;
@@ -716,9 +718,9 @@ class Robo {
     hasD(ele) {
         const p = this.orgArea.indexOf(ele);
 		if (p+1 > 48) return false;
-		console.log(ele);
-        console.log(p + 'D' + this.area.indexOf(this.orgArea[p+1]));
-        console.log(p + 'D' + this.area.indexOf(this.orgArea[p+2]));
+		//console.log(ele);
+        //console.log(p + 'D' + this.area.indexOf(this.orgArea[p+1]));
+        //console.log(p + 'D' + this.area.indexOf(this.orgArea[p+2]));
         if (this.area.indexOf(this.orgArea[p+1]) &&
             this.area.indexOf(this.orgArea[p+2])) {
             return true;
