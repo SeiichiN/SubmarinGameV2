@@ -466,7 +466,7 @@ class Robo {
         let result = checkRoboGuess(target);
         this.area = newArea;
         if (this.area.length < 40) {
-            this.area = this.considerArea(this.area);
+            this.area = this.considerArea();
         }
 
         for (let [name, status] of result.entries()) {
@@ -529,10 +529,10 @@ class Robo {
                 }
                 break;
             case 2:
-                console.log('1:' + this.orgTarget + ' 2:' + this.secTarget);
+                // console.log('1:' + this.orgTarget + ' 2:' + this.secTarget);
                 let firstIndex = this.orgArea.indexOf(this.orgTarget);
                 let secondIndex = this.orgArea.indexOf(this.secTarget);
-                console.log('1:' + firstIndex + ' 2:' + secondIndex);
+                // console.log('1:' + firstIndex + ' 2:' + secondIndex);
                 if (firstIndex - secondIndex === 1) {
                     if (newTarget = this.getNextTarget(this.upperCell(this.secTarget))) {
                         console.log('U' + this.lockOnNum +': ' + newTarget);
@@ -634,14 +634,20 @@ class Robo {
     considerArea() {
         const area =
             this.area.filter(x => 
-                 (this.hasX(x) || this.hasL(x) || this.hasR(x) ||
-                        this.hasY(x) || this.hasU(x) || this.hasD(x) )
+                 (this.hasX(x) || this.hasL(x) || this.hasR(x) || 
+				  this.hasY(x) || this.hasU(x) || this.hasD(x) )
             );
         return area;
     }
 
     hasX(ele) {
-        const p = this.area.indexOf(ele);
+        const p = this.orgArea.indexOf(ele);
+		if (p-7 < 0 || p+7 > 48) return false;
+		console.log(ele);
+        console.log(p + 'x' + this.orgArea[p-7]);
+        console.log(p + 'x' + this.orgArea[p+7]);
+        console.log(p + 'x' + this.area.indexOf(this.orgArea[p-7]));
+        console.log(p + 'x' + this.area.indexOf(this.orgArea[p+7]));
         if (this.area.indexOf(this.orgArea.indexOf(p-7)) &&
             this.area.indexOf(this.orgArea.indexOf(p+7))) {
             return true;
@@ -650,45 +656,71 @@ class Robo {
         }
     }
     hasL(ele) {
-        const p = this.area.indexOf(ele);
-        if (this.area.indexOf(this.orgArea.indexOf(p-7)) &&
-            this.area.indexOf(this.orgArea.indexOf(p-14))) {
+        const p = this.orgArea.indexOf(ele);
+		if (p-7 < 0) return false;
+		console.log(ele);
+        console.log(p + 'L' + this.orgArea[p-7]);
+        console.log(p + 'L' + this.orgArea[p-14]);
+        console.log(p + 'L' + this.area.indexOf(this.orgArea[p-7]));
+        console.log(p + 'L' + this.area.indexOf(this.orgArea[p-14]));
+        if (this.area.indexOf(this.orgArea[p-7]) &&
+            this.area.indexOf(this.orgArea[p-14])) {
             return true;
         } else {
             return false;
         }
     }
     hasR(ele) {
-        const p = this.area.indexOf(ele);
-        if (this.area.indexOf(this.orgArea.indexOf(p+7)) &&
-            this.area.indexOf(this.orgArea.indexOf(p+14))) {
+        const p = this.orgArea.indexOf(ele);
+		if (p+7 > 48) return false;
+		console.log(ele);
+        console.log(p + 'R' + this.orgArea[p+7]);
+        console.log(p + 'R' + this.orgArea[p+14]);
+        console.log(p + 'R' + this.area.indexOf(this.orgArea[p+7]));
+        console.log(p + 'R' + this.area.indexOf(this.orgArea[p+14]));
+        if (this.area.indexOf(this.orgArea[p+7]) &&
+            this.area.indexOf(this.orgArea[p+14])) {
             return true;
         } else {
             return false;
         }
     }
     hasY(ele) {
-        const p = this.area.indexOf(ele);
-        if (this.area.indexOf(this.orgArea.indexOf(p-1)) &&
-            this.area.indexOf(this.orgArea.indexOf(p+1))) {
+        const p = this.orgArea.indexOf(ele);
+		if (p-1 < 0 || p+1 > 48) return false;
+		console.log(ele);
+        console.log(p + 'Y' + this.orgArea[p-1]);
+        console.log(p + 'Y' + this.orgArea[p+1]);
+        console.log(p + 'Y' + this.area.indexOf(this.orgArea[p-1]));
+        console.log(p + 'Y' + this.area.indexOf(this.orgArea[p+1]));
+        if (this.area.indexOf(this.orgArea[p-1]) &&
+            this.area.indexOf(this.orgArea[p+1])) {
             return true;
         } else {
             return false;
         }
     }
     hasU(ele) {
-        const p = this.area.indexOf(ele);
-        if (this.area.indexOf(this.orgArea.indexOf(p-1)) &&
-            this.area.indexOf(this.orgArea.indexOf(p-2))) {
+        const p = this.orgArea.indexOf(ele);
+		if (p-1 < 0) return false;
+		console.log(ele);
+        console.log(p + 'U' + this.area.indexOf(this.orgArea[p-1]));
+        console.log(p + 'U' + this.area.indexOf(this.orgArea[p-2]));
+        if (this.area.indexOf(this.orgArea[p-1]) &&
+            this.area.indexOf(this.orgArea[p-2])) {
             return true;
         } else {
             return false;
         }
     }
     hasD(ele) {
-        const p = this.area.indexOf(ele);
-        if (this.area.indexOf(this.orgArea.indexOf(p+1)) &&
-            this.area.indexOf(this.orgArea.indexOf(p+2))) {
+        const p = this.orgArea.indexOf(ele);
+		if (p+1 > 48) return false;
+		console.log(ele);
+        console.log(p + 'D' + this.area.indexOf(this.orgArea[p+1]));
+        console.log(p + 'D' + this.area.indexOf(this.orgArea[p+2]));
+        if (this.area.indexOf(this.orgArea[p+1]) &&
+            this.area.indexOf(this.orgArea[p+2])) {
             return true;
         } else {
             return false;
