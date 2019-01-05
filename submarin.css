@@ -68,6 +68,24 @@ td {
     display: none;
 }
 
+#players-set {
+    width: 270px;
+}
+
+#players-set input {
+    width: 20px;
+}
+
+.ship-name {
+    float: left;
+    line-height: 40px;
+}
+
+.ship-cell {
+    float: right;
+}
+
+
 @media screen and (min-width: 768px) {
     #wrap {
         width: 300px;

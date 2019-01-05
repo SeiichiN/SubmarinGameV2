@@ -60,6 +60,40 @@
                     <div id="teki-mes1"></div>
                     <div id="teki-mes2"></div>
                 </section>
+                <section class="players-ship">
+                    <p>
+                        あなたの3隻の潜水艦を配置してください。<br>
+                        1隻の潜水艦につき3つのセルが必要です。<br>
+                        3つのセルは、縦でも横でもかまいません。
+                    </p>
+                    <form id="players-set">
+                        <div class="clearfix">
+                            <div class="ship-name">Odyssey:</div>
+                            <div class="ship-cell">
+                                <label for="ody1">1:</label><input type="text" id="ody1">
+                                <label for="ody2">2:</label><input type="text" id="ody2">
+                                <label for="ody3">3:</label><input type="text" id="ody3">
+                            </div>
+                        </div>
+                        <div class="clearfix">
+                            <div class="ship-name">Poseidon:</div>
+                            <div class="ship-cell">
+                                <label for="pos1">1:</label><input type="text" id="pos1">
+                                <label for="pos2">2:</label><input type="text" id="pos2">
+                                <label for="pos3">3:</label><input type="text" id="pos3">
+                            </div>
+                        </div>
+                        <div class="clearfix">
+                            <div class="ship-name">Hermes:</div>
+                            <div class="ship-cell">
+                                <label for="her1">1:</label><input type="text" id="her1">
+                                <label for="her2">2:</label><input type="text" id="her2">
+                                <label for="her3">3:</label><input type="text" id="her3">
+                            </div>
+                        </div>
+                    </form>
+                        <div><button id="set-ok">決定</button></div>
+                </section>
             </article>
             <footer>
                 <small>&copy; 2018 Seiichi Nukayama</small>
@@ -68,4 +102,19 @@
     </body>
 </html>
 
+                        <!-- <p>Odyssey:<br>
+                             <label for="ody1">cell-1:</label><input type="text" id="ody1">
+                             <label for="ody2">cell-2:</label><input type="text" id="ody2">
+                             <label for="ody3">cell-3:</label><input type="text" id="ody3">
+                             </p>
+                             <p>Poseidon:<br>
+                             <label for="pos1">cell-1:</label><input type="text" id="pos1">
+                             <label for="pos2">cell-2:</label><input type="text" id="pos2">
+                             <label for="pos3">cell-3:</label><input type="text" id="pos3">
+                             </p>
+                             <p>Hermes:<br>
+                             <label for="her1">cell-1:</label><input type="text" id="her1">
+                             <label for="her2">cell-2:</label><input type="text" id="her2">
+                             <label for="her3">cell-3:</label><input type="text" id="her3">
+                             </p> -->
 

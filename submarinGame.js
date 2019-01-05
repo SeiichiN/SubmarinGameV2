@@ -378,15 +378,15 @@ function roboInit() {
     const mySubmarin2 = new Submarin();
     const mySubmarin3 = new Submarin();
 
-    const loc1 = ["C4", "C5", "C6"];
+    const loc1 = odyssey || ["C4", "C5", "C6"];
     mySubmarin1.setLocationCells(loc1);
     mySubmarin1.setName('Odyssey');
 
-    const loc2 = ["E2", "F2", "G2"];
+    const loc2 = poseidon || ["E2", "F2", "G2"];
     mySubmarin2.setLocationCells(loc2);
     mySubmarin2.setName('Poseidon');
 
-    const loc3 = ["A3", "A4", "A5"];
+    const loc3 = hermes || ["A3", "A4", "A5"];
     mySubmarin3.setLocationCells(loc3);
     mySubmarin3.setName('Hermes');
 
@@ -727,6 +727,57 @@ function howto() {
     });
 }
 
+/**
+ * ユーザーに潜水艦の位置をセットしてもらう
+ */
+function setUserShip() {
+    const setOk = document.getElementById("set-ok");
+
+    let ody1 = "";
+    let ody2 = "";
+    let ody3 = "";
+    let pos1 = "";
+    let pos2 = "";
+    let pos3 = "";
+    let her1 = "";
+    let her2 = "";
+    let her3 = "";
+
+    setOk.onclick = (() => { 
+
+        ody1 = document.getElementById("ody1").value.toUpperCase();
+        ody2 = document.getElementById("ody2").value.toUpperCase();
+        ody3 = document.getElementById("ody3").value.toUpperCase();
+        pos1 = document.getElementById("pos1").value.toUpperCase();
+        pos2 = document.getElementById("pos2").value.toUpperCase();
+        pos3 = document.getElementById("pos3").value.toUpperCase();
+        her1 = document.getElementById("her1").value.toUpperCase();
+        her2 = document.getElementById("her2").value.toUpperCase();
+        her3 = document.getElementById("her3").value.toUpperCase();
+
+    });
+
+    /* let ody1 = "d2";
+     * let ody2 = "e2";
+     * let ody3 = "f2";
+     * let pos1 = "g4";
+     * let pos2 = "g5";
+     * let pos3 = "g6";
+     * let her1 = "b7";
+     * let her2 = "c7";
+     * let her3 = "d7";*/
+
+
+    odyssey = [ody1, ody2, ody3];
+    poseidon = [pos1, pos2, pos3];
+    hermes = [her1, her2, her3];
+
+    console.log(odyssey);
+    console.log(poseidon);
+    console.log(hermes);
+
+}
+
 
 // 広域変数
 const ALPHABET = "ABCDEFG";
@@ -762,12 +813,15 @@ let roboNumOfGuess = 0;   // 敵からの攻撃回数
 let myNumOfSubmarin = 3;  // プレーヤーの潜水艦の数
 let roboResult = {};      // 敵の攻撃結果（プレーヤーの状況）
 let robo = {}; //  = new Robo();  // 敵ロボット作成
+let oddysey = [];
+let poseidon = [];
+let hermes = [];
+
 
 window.onload = (() => {
     init();               // プレーヤー側の攻撃準備
+    setUserShip();
     roboInit();           // 敵（ロボ）の攻撃準備
     howto();
     // play(); //  <== onclickをスクリプト内に入れるにはどうすればいいか？
 });
-
-
