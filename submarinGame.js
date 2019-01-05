@@ -741,13 +741,17 @@ class Robo {
         console.log('hasEnemy:' + this.shipArea);
         const p = this.orgArea.indexOf(ele);
         if ((p-7 >= 0 && this.shipArea.indexOf(this.orgArea[p-7])) ||
-            (p-14 >= 0 && this.shipArea.indexOf(this.orgArea[p-14])) ||
+            ((p-7 >= 0 && this.shipArea.indexOf(this.orgArea[p-7])) &&
+             (p-14 >= 0 && this.shipArea.indexOf(this.orgArea[p-14]))) ||
             (p+7 < 49 && this.shipArea.indexOf(this.orgArea[p+7])) ||
-            (p+14 < 49 && this.shipArea.indexOf(this.orgArea[p+14])) ||
+            ((p+7 < 49 && this.shipArea.indexOf(this.orgArea[p+7])) &&
+             (p+14 < 49 && this.shipArea.indexOf(this.orgArea[p+14]))) ||
             (p-1 >= 0 && this.shipArea.indexOf(this.orgArea[p-1])) ||
-            (p-2 >= 0 && this.shipArea.indexOf(this.orgArea[p-2])) ||
+            ((p-1 >= 0 && this.shipArea.indexOf(this.orgArea[p-1])) &&
+             (p-2 >= 0 && this.shipArea.indexOf(this.orgArea[p-2]))) ||
             (p+1 < 49 && this.shipArea.indexOf(this.orgArea[p+1])) ||
-            (p+2 < 49 && this.shipArea.indexOf(this.orgArea[p+2]))) {
+            ((p+1 < 49 && this.shipArea.indexOf(this.orgArea[p+1])) &&
+             (p+2 < 49 && this.shipArea.indexOf(this.orgArea[p+2])))) {
             return true;
         }
         else {
