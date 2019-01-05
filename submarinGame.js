@@ -266,7 +266,7 @@ function selection(cell) {
     for (const [n, s] of roboResult) {
         switch(s) {
             case "命中":
-                tekiKekka.textContent = "敵の攻撃が命中。";
+                tekiKekka.textContent = "敵の攻撃が " + n + " に命中。";
                 tekiHit = true;
                 break;
             case "撃沈":
@@ -371,7 +371,12 @@ function roboInit() {
     myNumOfSubmarin = 3;
     roboResult = null;
     mySubmarinList = [];
-    robo = new Robo();
+
+    const name1 = 'Odyssey';
+    const name2 = 'Poseidon';
+    const name3 = 'Hermes';
+    
+    robo = new Robo(name1, name2, name3);
 
     const numOfCells = 3;
     const mySubmarin1 = new Submarin();
@@ -382,17 +387,17 @@ function roboInit() {
 
     const loc1 = (odyssey.length > 0) ? odyssey : ["C4", "C5", "C6"];
     mySubmarin1.setLocationCells(loc1);
-    mySubmarin1.setName('Odyssey');
+    mySubmarin1.setName(name1);
     writeShip('ship1', loc1);
 
     const loc2 = (poseidon.length > 0) ? poseidon : ["E2", "F2", "G2"];
     mySubmarin2.setLocationCells(loc2);
-    mySubmarin2.setName('Poseidon');
+    mySubmarin2.setName(name2);
     writeShip('ship2', loc2);
 
     const loc3 = (hermes.length > 0) ? hermes : ["A3", "A4", "A5"];
     mySubmarin3.setLocationCells(loc3);
-    mySubmarin3.setName('Hermes');
+    mySubmarin3.setName(name3);
     writeShip('ship3', loc3);
 
     mySubmarinList.push(mySubmarin1);
@@ -435,16 +440,25 @@ function checkRoboGuess(gs) {
 
 class Robo {
 
-    constructor() {
-        this.area = [];
-        this.orgArea = [];
-        this.setArea();
+    constructor(name1, name2, name3) {
+        this.area = [];            // 攻撃対象のセル・この中から選ぶ
+        this.orgArea = [];         // ゲームの最初のセルを保存・B7とかのセル情報を保存
+        this.shipArea = [];        // 命中させたセル・B7とかの情報を保存
         this.newTarget = "";
-        this.lockOnNum = 0;
+        this.enemyNum = 0;          // 何番目の敵か
         this.lockOnMode = false;
-        this.orgTarget = "";
+        this.orgTarget = "";       // 最初に命中したセルを覚えておく
         this.secTarget = "";
         this.lockOnName = "";
+        this.lockOnNum = 0;
+
+        this.enemy = [
+            { area: [], name: name1, times: 0 },
+            { area: [], name: name2, times: 0 },
+            { area: [], name: name3, times: 0 },
+        ];
+        
+        this.setArea();
     }
 
     setArea () {
@@ -466,6 +480,7 @@ class Robo {
         let target = "";
         let index = 0;
         
+        console.log('lockOnMode:' + this.lockOnMode);
         if (this.lockOnMode) {
             target = this.newTarget;
             index = this.area.indexOf(target);
@@ -474,50 +489,92 @@ class Robo {
             index = Math.floor(Math.random() * length);   // 0 〜 48
             target = this.area[index];
         }
-        console.log('ind:' + index + ' targ:' + target);
-        console.log(this.lockOnNum);
-        console.log(this.lockOnMode);
-        console.log(this.lockOnName);
+        console.log('Target: ' + target);
         
         let result = checkRoboGuess(target);
+        // 攻撃したセルを対象セルからはずす
         this.area = this.area.filter(x => x !== target);
+        // 10回目の攻撃から、知能を働かせる。
         if (this.area.length < 40) {
             this.area = this.considerArea();
         }
-        console.log(this.area);
+        console.log(this.area);  // 攻撃対象セル一覧
 
+        let count = 0;
+        // console.log(result);
+        console.log('result.size:' + result.size);
+        
+        // 攻撃結果から処理を選択する
+        // {'xxx'-> '失敗, 'YYY'->'失敗', 'ZZZ'->'命中'}
         for (let [name, status] of result.entries()) {
-            // console.log(`${name}: ${status}`);
-            if (status === '命中' && this.lockOnName === "" && !this.lockOnMode) {
-                this.lockOnNum++;
+            count++;
+            if (status === '命中') {
+                if (this.lockOnMode === false) {
+                    this.orgTarget = target;
+                }
+                for (let ene of this.enemy) {
+                    if (ene.name === name) {
+                        
+                        console.log(ene.area);
+                        console.log('tar:' + target);
+                        
+                        ene.area.push(target);
+                        
+                        console.log(ene.area);
+                        
+                        ene.times++;
+                        this.lockOnNum = ene.times;
+                        if (ene.times === 2) {
+                            this.secTarget = target;
+                        }
+                    }                    
+                }
                 this.lockOnMode = true;
-                this.lockOnName = name;
-                this.orgTarget = target;
+                this.shipArea.push(target);
+                break;
             }
-
-            else if (status === '命中' && name !== this.lockOnName) {
-                console.log('別の船や');
-            }
-
             else if (status === '撃沈') {
-                this.lockOnNum = 0;
-                this.lockOnMode = false;
-                this.lockOnName = "";
+                this.enemy = this.enemy.filter((x) => x.name !== name);
+                for (let ene of this.enemy) {
+                    switch (ene.times) {
+                        case 1:
+                            this.orgTarget = ene.area[0];
+                            this.lockOnNum = 1;
+                            break;
+                        case 2:
+                            this.secTarget = ene.area[1];
+                            this.lockOnNum = 2;
+                            break;
+                        default:
+                            this.orgTarget = "";
+                            this.secTarget = "";
+                            this.lockOnNum = 0;
+                    }
+                }
+//                if (this.orgTarget === "" && this.secTarget === "") {
+                if (this.lockOnNum === 0) {
+                    this.lockOnMode = false;
+                }
+                this.shipArea.push(target);
+                break;
             }
-
-            else if (name === this.lockOnName && this.lockOnNum === 1) {
-                if (status === '失敗') {
+            else if (status === '失敗' && count === result.size) {
+                if (this.secTarget !== "") {
+                    target = this.secTarget;
+                } else if (this.orgTarget !== "") {
                     target = this.orgTarget;
-                } else if (status === '命中') {
-                    this.lockOnNum++
-                    this.secTarget = target;
                 }
             }
+
         }
+        console.log('lockOnNum:' + this.lockOnNum);
+        console.log(this.enemy);
+        console.log('orgTar:' + this.orgTarget + ' secTar:' + this.secTarget);
+        this.hasEnemy();
 
         if (this.lockOnMode) {
             this.newTarget = this.thinkTarget(name, target);
-//            console.log(this.newTarget);
+            console.log('newTarget: ' + this.newTarget);
         }
            
         return result;
@@ -527,19 +584,20 @@ class Robo {
         let newTarget = "";
         switch (this.lockOnNum) {
             case 1:
-                if (newTarget = this.getNextTarget(this.leftCell(target))) {
+                let nowIdx = this.orgArea.indexOf(target);
+                if (newTarget = this.getNextTarget(this.orgArea[nowIdx - 7])) {
                     // console.log('L' + this.lockOnNum +': ' + newTarget);
                     return newTarget;
                 } 
-                if (newTarget = this.getNextTarget(this.upperCell(target))) {
+                if (newTarget = this.getNextTarget(this.orgArea[nowIdx - 1])) {
                     // console.log('U' + this.lockOnNum +': ' + newTarget);
                     return newTarget;
                 } 
-                if (newTarget = this.getNextTarget(this.rightCell(target))) {
+                if (newTarget = this.getNextTarget(this.orgArea[nowIdx + 7])) {
                     // console.log('R' + this.lockOnNum +': ' + newTarget);
                     return newTarget;
                 } 
-                if (newTarget = this.getNextTarget(this.lowerCell(target))) {
+                if (newTarget = this.getNextTarget(this.orgArea[nowIdx + 1])) {
                     // console.log('D' + this.lockOnNum +': ' + newTarget);
                     return newTarget;
                 }
@@ -549,46 +607,67 @@ class Robo {
                 let firstIndex = this.orgArea.indexOf(this.orgTarget);
                 let secondIndex = this.orgArea.indexOf(this.secTarget);
                 // console.log('1:' + firstIndex + ' 2:' + secondIndex);
-                if (firstIndex - secondIndex === 1) {
-                    if (newTarget = this.getNextTarget(this.upperCell(this.secTarget))) {
-                        // console.log('U' + this.lockOnNum +': ' + newTarget);
+                let small = Math.min(firstIndex, secondIndex);
+                let large = Math.max(firstIndex, secondIndex);
+
+                if (large - small === 1) {
+                    if (newTarget = this.getNextTarget(this.orgArea[small - 1])) {
                         return newTarget;
                     }
-                    if (newTarget = this.getNextTarget(this.lowerCell(this.orgTarget))) {
-                        // console.log('D' + this.lockOnNum +': ' + newTarget);
-                        return newTarget;
-                    }
-                }
-                else if (firstIndex - secondIndex === -1) {
-                    if (newTarget = this.getNextTarget(this.upperCell(this.orgTarget))) {
-                        // console.log('U' + this.lockOnNum +': ' + newTarget);
-                        return newTarget;
-                    }
-                    if (newTarget = this.getNextTarget(this.lowerCell(this.secTarget))) {
-                        // console.log('D' + this.lockOnNum +': ' + newTarget);
+                    else if (newTarget = this.getNextTarget(this.orgArea[large + 1])) {
                         return newTarget;
                     }
                 }
-                else if (firstIndex - secondIndex === 7) {
-                    if (newTarget = this.getNextTarget(this.leftCell(this.secTarget))) {
-                        // console.log('L' + this.lockOnNum +': ' + newTarget);
+                if (large - small === 7) {
+                    if (newTarget = this.getNextTarget(this.orgArea[small - 7])) {
                         return newTarget;
                     }
-                    if (newTarget = this.getNextTarget(this.rightCell(this.orgTarget))) {
-                        // console.log('L' + this.lockOnNum +': ' + newTarget);
-                        return newTarget;
-                    }
-                }
-                else if (firstIndex - secondIndex === -7) {
-                    if (newTarget = this.getNextTarget(this.leftCell(this.orgTarget))) {
-                        // console.log('L' + this.lockOnNum +': ' + newTarget);
-                        return newTarget;
-                    }
-                    if (newTarget = this.getNextTarget(this.rightCell(this.secTarget))) {
-                        // console.log('L' + this.lockOnNum +': ' + newTarget);
+                    else if (newTarget = this.getNextTarget(this.orgArea[large + 7])) {
                         return newTarget;
                     }
                 }
+                
+                
+                /* if (firstIndex - secondIndex === 1) {
+                 *     if (newTarget = this.getNextTarget(this.upperCell(this.secTarget))) {
+                 *         // console.log('U' + this.lockOnNum +': ' + newTarget);
+                 *         return newTarget;
+                 *     }
+                 *     if (newTarget = this.getNextTarget(this.lowerCell(this.orgTarget))) {
+                 *         // console.log('D' + this.lockOnNum +': ' + newTarget);
+                 *         return newTarget;
+                 *     }
+                 * }
+                 * else if (firstIndex - secondIndex === -1) {
+                 *     if (newTarget = this.getNextTarget(this.upperCell(this.orgTarget))) {
+                 *         // console.log('U' + this.lockOnNum +': ' + newTarget);
+                 *         return newTarget;
+                 *     }
+                 *     if (newTarget = this.getNextTarget(this.lowerCell(this.secTarget))) {
+                 *         // console.log('D' + this.lockOnNum +': ' + newTarget);
+                 *         return newTarget;
+                 *     }
+                 * }
+                 * else if (firstIndex - secondIndex === 7) {
+                 *     if (newTarget = this.getNextTarget(this.leftCell(this.secTarget))) {
+                 *         // console.log('L' + this.lockOnNum +': ' + newTarget);
+                 *         return newTarget;
+                 *     }
+                 *     if (newTarget = this.getNextTarget(this.rightCell(this.orgTarget))) {
+                 *         // console.log('L' + this.lockOnNum +': ' + newTarget);
+                 *         return newTarget;
+                 *     }
+                 * }
+                 * else if (firstIndex - secondIndex === -7) {
+                 *     if (newTarget = this.getNextTarget(this.leftCell(this.orgTarget))) {
+                 *         // console.log('L' + this.lockOnNum +': ' + newTarget);
+                 *         return newTarget;
+                 *     }
+                 *     if (newTarget = this.getNextTarget(this.rightCell(this.secTarget))) {
+                 *         // console.log('L' + this.lockOnNum +': ' + newTarget);
+                 *         return newTarget;
+                 *     }
+                 * }*/
                 break;
         }  
     }
@@ -611,53 +690,70 @@ class Robo {
         }
     }
 
-    leftCell(target) {
-        const indexTarget = this.orgArea.indexOf(target);
-        const newIndex = indexTarget - 7;
-        if (newIndex >= 0) {
-            return this.orgArea[newIndex];
-        }
-        return false;
-    }
+    /* leftCell(target) {
+     *     const indexTarget = this.orgArea.indexOf(target);
+     *     const newIndex = indexTarget - 7;
+     *     if (newIndex >= 0) {
+     *         return this.orgArea[newIndex];
+     *     }
+     *     return false;
+     * }
 
-    rightCell(target) {
-        const indexTarget = this.orgArea.indexOf(target);
-        const newIndex = indexTarget + 7;
-        if (newIndex < 49) {
-            return this.orgArea[newIndex];
-        }
-        return false;
-    }
+     * rightCell(target) {
+     *     const indexTarget = this.orgArea.indexOf(target);
+     *     const newIndex = indexTarget + 7;
+     *     if (newIndex < 49) {
+     *         return this.orgArea[newIndex];
+     *     }
+     *     return false;
+     * }
 
-    upperCell(target) {
-        const indexTarget = this.orgArea.indexOf(target);
-        const newIndex = indexTarget - 1;
-        if (newIndex >= 0) {
-            return this.orgArea[newIndex];
-        }
-        return false;
-    }
-        
-    lowerCell(target) {
-        const indexTarget = this.orgArea.indexOf(target);
-        const newIndex = indexTarget + 1;
-        if (newIndex < 49) {
-            return this.orgArea[newIndex];
-        }
-        return false;
-    }
+     * upperCell(target) {
+     *     const indexTarget = this.orgArea.indexOf(target);
+     *     const newIndex = indexTarget - 1;
+     *     if (newIndex >= 0) {
+     *         return this.orgArea[newIndex];
+     *     }
+     *     return false;
+     * }
+     *     
+     * lowerCell(target) {
+     *     const indexTarget = this.orgArea.indexOf(target);
+     *     const newIndex = indexTarget + 1;
+     *     if (newIndex < 49) {
+     *         return this.orgArea[newIndex];
+     *     }
+     *     return false;
+     * }*/
 
     considerArea() {
         const area =
             this.area.filter(x => 
 					(this.hasX(x) || this.hasL(x) ||
 					 this.hasR(x) || this.hasY(x) ||
-					 this.hasU(x) || this.hasD(x) )
+					 this.hasU(x) || this.hasD(x) || this.hasEnemy(x) )
 			);
 		// console.log('consider:<' + area.length + "> " + area);
         return area;
     }
 
+    hasEnemy(ele) {
+        console.log('hasEnemy:' + this.shipArea);
+        const p = this.orgArea.indexOf(ele);
+        if ((p-7 >= 0 && this.shipArea.indexOf(this.orgArea[p-7])) ||
+            (p-14 >= 0 && this.shipArea.indexOf(this.orgArea[p-14])) ||
+            (p+7 < 49 && this.shipArea.indexOf(this.orgArea[p+7])) ||
+            (p+14 < 49 && this.shipArea.indexOf(this.orgArea[p+14])) ||
+            (p-1 >= 0 && this.shipArea.indexOf(this.orgArea[p-1])) ||
+            (p-2 >= 0 && this.shipArea.indexOf(this.orgArea[p-2])) ||
+            (p+1 < 49 && this.shipArea.indexOf(this.orgArea[p+1])) ||
+            (p+2 < 49 && this.shipArea.indexOf(this.orgArea[p+2]))) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
     hasX(ele) {
         const p = this.orgArea.indexOf(ele);
 		if (p-7 < 0 || p+7 > 48) return false;
@@ -745,9 +841,17 @@ function howto() {
  * ユーザーに潜水艦の位置をセットしてもらう
  */
 function setUserShip() {
+    const setBtn = document.getElementById('set-ship-btn');
     const setOk = document.getElementById("set-ok");
+    
+    const setShipArea = document.getElementsByClassName('set-players-ship')[0];
+    setShipArea.setAttribute('style','display: none;');
 
-    setOk.onclick = (() => { 
+    setBtn.onclick = (() => {
+        setBtn.setAttribute('style','display: none;');
+        setShipArea.setAttribute('style','display: block;');
+    });
+    setOk.onclick = (() => {
 
         const ody1 = document.getElementById("ody1").value.toUpperCase();
         const ody2 = document.getElementById("ody2").value.toUpperCase();
@@ -763,6 +867,8 @@ function setUserShip() {
         poseidon = [pos1, pos2, pos3];
         hermes = [her1, her2, her3];
 
+        setBtn.setAttribute('style','display: block;');
+        setShipArea.setAttribute('style','display: none;');
         roboInit();
     });
 }

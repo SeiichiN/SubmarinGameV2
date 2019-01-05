@@ -60,6 +60,7 @@
                     <div id="teki-mes1"></div>
                     <div id="teki-mes2"></div>
                 </section>
+                <button id="set-ship-btn">我が軍の潜水艦を配置する</button>
                 <section class="set-players-ship">
                     <p>
                         あなたの3隻の潜水艦を配置してください。<br>
