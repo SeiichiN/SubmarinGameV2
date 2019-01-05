@@ -378,22 +378,32 @@ function roboInit() {
     const mySubmarin2 = new Submarin();
     const mySubmarin3 = new Submarin();
 
-    const loc1 = odyssey || ["C4", "C5", "C6"];
+    console.log(odyssey);
+
+    const loc1 = (odyssey.length > 0) ? odyssey : ["C4", "C5", "C6"];
     mySubmarin1.setLocationCells(loc1);
     mySubmarin1.setName('Odyssey');
+    writeShip('ship1', loc1);
 
-    const loc2 = poseidon || ["E2", "F2", "G2"];
+    const loc2 = (poseidon.length > 0) ? poseidon : ["E2", "F2", "G2"];
     mySubmarin2.setLocationCells(loc2);
     mySubmarin2.setName('Poseidon');
+    writeShip('ship2', loc2);
 
-    const loc3 = hermes || ["A3", "A4", "A5"];
+    const loc3 = (hermes.length > 0) ? hermes : ["A3", "A4", "A5"];
     mySubmarin3.setLocationCells(loc3);
     mySubmarin3.setName('Hermes');
+    writeShip('ship3', loc3);
 
     mySubmarinList.push(mySubmarin1);
     mySubmarinList.push(mySubmarin2);
     mySubmarinList.push(mySubmarin3);
 
+}
+
+function writeShip(idname, loc) {
+    const userShip = document.getElementById(idname);
+    userShip.textContent = loc.join(" ");
 }
 
 function checkRoboGuess(gs) {
@@ -458,18 +468,23 @@ class Robo {
         
         if (this.lockOnMode) {
             target = this.newTarget;
+            index = this.area.indexOf(target);
         } else {
             let length = this.area.length;                    // length = 49
             index = Math.floor(Math.random() * length);   // 0 〜 48
             target = this.area[index];
         }
-        // console.log('ind:' + index + ' targ:' + target);
-        let newArea = this.area.filter(x => x !== target);
+        console.log('ind:' + index + ' targ:' + target);
+        console.log(this.lockOnNum);
+        console.log(this.lockOnMode);
+        console.log(this.lockOnName);
+        
         let result = checkRoboGuess(target);
-        this.area = newArea;
+        this.area = this.area.filter(x => x !== target);
         if (this.area.length < 40) {
             this.area = this.considerArea();
         }
+        console.log(this.area);
 
         for (let [name, status] of result.entries()) {
             // console.log(`${name}: ${status}`);
@@ -505,7 +520,6 @@ class Robo {
 //            console.log(this.newTarget);
         }
            
-        console.log('this.area:' + this.area);
         return result;
     }
 
@@ -733,49 +747,24 @@ function howto() {
 function setUserShip() {
     const setOk = document.getElementById("set-ok");
 
-    let ody1 = "";
-    let ody2 = "";
-    let ody3 = "";
-    let pos1 = "";
-    let pos2 = "";
-    let pos3 = "";
-    let her1 = "";
-    let her2 = "";
-    let her3 = "";
-
     setOk.onclick = (() => { 
 
-        ody1 = document.getElementById("ody1").value.toUpperCase();
-        ody2 = document.getElementById("ody2").value.toUpperCase();
-        ody3 = document.getElementById("ody3").value.toUpperCase();
-        pos1 = document.getElementById("pos1").value.toUpperCase();
-        pos2 = document.getElementById("pos2").value.toUpperCase();
-        pos3 = document.getElementById("pos3").value.toUpperCase();
-        her1 = document.getElementById("her1").value.toUpperCase();
-        her2 = document.getElementById("her2").value.toUpperCase();
-        her3 = document.getElementById("her3").value.toUpperCase();
+        const ody1 = document.getElementById("ody1").value.toUpperCase();
+        const ody2 = document.getElementById("ody2").value.toUpperCase();
+        const ody3 = document.getElementById("ody3").value.toUpperCase();
+        const pos1 = document.getElementById("pos1").value.toUpperCase();
+        const pos2 = document.getElementById("pos2").value.toUpperCase();
+        const pos3 = document.getElementById("pos3").value.toUpperCase();
+        const her1 = document.getElementById("her1").value.toUpperCase();
+        const her2 = document.getElementById("her2").value.toUpperCase();
+        const her3 = document.getElementById("her3").value.toUpperCase();
 
+        odyssey = [ody1, ody2, ody3];
+        poseidon = [pos1, pos2, pos3];
+        hermes = [her1, her2, her3];
+
+        roboInit();
     });
-
-    /* let ody1 = "d2";
-     * let ody2 = "e2";
-     * let ody3 = "f2";
-     * let pos1 = "g4";
-     * let pos2 = "g5";
-     * let pos3 = "g6";
-     * let her1 = "b7";
-     * let her2 = "c7";
-     * let her3 = "d7";*/
-
-
-    odyssey = [ody1, ody2, ody3];
-    poseidon = [pos1, pos2, pos3];
-    hermes = [her1, her2, her3];
-
-    console.log(odyssey);
-    console.log(poseidon);
-    console.log(hermes);
-
 }
 
 
@@ -813,7 +802,7 @@ let roboNumOfGuess = 0;   // 敵からの攻撃回数
 let myNumOfSubmarin = 3;  // プレーヤーの潜水艦の数
 let roboResult = {};      // 敵の攻撃結果（プレーヤーの状況）
 let robo = {}; //  = new Robo();  // 敵ロボット作成
-let oddysey = [];
+let odyssey = [];
 let poseidon = [];
 let hermes = [];
 
