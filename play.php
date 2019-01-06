@@ -149,9 +149,9 @@
                     <button id="set-ok">決定</button>
                 </section>
                 <section id="players-ship">
-                    <div>Oddysey &nbsp;&nbsp;      : <span id="ship1"></span></div>
-                    <div>Poseidon &nbsp;           : <span id="ship2"></span></div>
-                    <div>Hermes &nbsp;&nbsp;&nbsp; : <span id="ship3"></span></div>
+                    <div>Oddysey &nbsp;&nbsp;      : <span id="ship1"></span><span id="kekka-Ody"></span></div>
+                    <div>Poseidon &nbsp;           : <span id="ship2"></span><span id="kekka-Pos"></span></div>
+                    <div>Hermes &nbsp;&nbsp;&nbsp; : <span id="ship3"></span><span id="kekka-Her"></span></div>
                 </section>
             </article>
             <footer>

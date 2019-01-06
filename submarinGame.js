@@ -198,7 +198,7 @@ function checkUsedCell(cell) {
  *           画面に「命中」とかの表示をする。
  * @param: ユーザの入力したセル（文字列 ex.'B3'）
  */
-export function selection(cell) {
+function selection(cell) {
 
     if (numOfSubmarin === 0) return false;
     if (checkUsedCell(cell)) return false;
@@ -278,10 +278,29 @@ export function selection(cell) {
         return false;
     }
 
+    function kekka_myship(idname, times) {
+        let mykekka = document.getElementById(idname);
+        let mark = "X".repeat(times);
+        mykekka.textContent = mark;
+        mykekka.setAttribute('style', 'color: #f00', 'fontWeight: bold');
+    }
 
     // 敵の攻撃
     let tekiHit = false;
+//    let damage = {};
+    let countDamage = function(name) {
+        let damage = {};
+        damage.Odyssey = 0;
+        damage.Poseidon = 0;
+        damage.Hermes = 0;
+        return function() {
+            damage[name]++;
+            return damage;
+            };
+    }();
+    
     for (const [n, s] of roboResult) {
+        let idname = 'kekka-'+ n.substr(0, 3);
         switch(s) {
             case "命中":
                 tekiKekka.textContent = "敵の攻撃が " + n + " に命中。";
@@ -289,6 +308,9 @@ export function selection(cell) {
                     {opacity: 1, backgroundColor: "#f00"},
                     {opacity: 1, backgroundColor: "#fff"}
                 ], { duration: 1000 });
+                countDamage();
+                console.log(damage);
+                kekka_myship(idname, damage[n]);
                 tekiHit = true;
                 break;
             case "撃沈":
@@ -298,6 +320,9 @@ export function selection(cell) {
                     {opacity: 1, backgroundColor: "#fff"}
                 ], { duration: 1000, iterations: 2 });
                 tekiHit = true;
+                countDamage();
+                console.log(damage);
+                kekka_myship(idname, damage[n]);
                 break;
             default:
                 tekiKekka.textContent = "敵の攻撃が失敗。";
