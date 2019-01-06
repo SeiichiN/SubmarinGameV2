@@ -287,18 +287,8 @@ function selection(cell) {
 
     // 敵の攻撃
     let tekiHit = false;
-//    let damage = {};
-    let countDamage = function(name) {
-        let damage = {};
-        damage.Odyssey = 0;
-        damage.Poseidon = 0;
-        damage.Hermes = 0;
-        return function() {
-            damage[name]++;
-            return damage;
-            };
-    }();
-    
+    let damage;
+
     for (const [n, s] of roboResult) {
         let idname = 'kekka-'+ n.substr(0, 3);
         switch(s) {
@@ -308,9 +298,8 @@ function selection(cell) {
                     {opacity: 1, backgroundColor: "#f00"},
                     {opacity: 1, backgroundColor: "#fff"}
                 ], { duration: 1000 });
-                countDamage();
-                console.log(damage);
-                kekka_myship(idname, damage[n]);
+                damage = countDamage(n);
+                kekka_myship(idname, damage[n] );
                 tekiHit = true;
                 break;
             case "撃沈":
@@ -320,8 +309,7 @@ function selection(cell) {
                     {opacity: 1, backgroundColor: "#fff"}
                 ], { duration: 1000, iterations: 2 });
                 tekiHit = true;
-                countDamage();
-                console.log(damage);
+                damage = countDamage(n);
                 kekka_myship(idname, damage[n]);
                 break;
             default:
@@ -543,6 +531,17 @@ function setUserShip() {
     });
 }
 
+let makeCountDamage = function() {
+    var damage = {
+        Odyssey: 0,
+        Poseidon: 0,
+        Hermes: 0
+    };
+    return function(name) {
+        damage[name]++;
+        return damage;
+    };
+};
 
 // 広域変数
 const ALPHABET = "ABCDEFG";
@@ -582,6 +581,8 @@ let robo = {}; //  = new myRobo.Robo();  // 敵ロボット作成
 let odyssey = [];
 let poseidon = [];
 let hermes = [];
+
+let countDamage = makeCountDamage();
 
 
 window.onload = (() => {
