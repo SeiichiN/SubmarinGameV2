@@ -5,7 +5,7 @@
         <meta name="viewport" content="width=device-width,initial-scale=1">
         <title>潜水艦ゲーム</title>
         <link rel="stylesheet" href="submarin.css">
-        <script src="submarinGame.js"></script>
+        <script type="module" src="submarinGame.js"></script>
     </head>
     <body>
         <div id="wrap">
@@ -42,8 +42,7 @@
                             <th><?php echo $i; ?></th>
                             <?php for ($j = 1; $j <= 7; $j++) {  ?>
                                 <?php $idx = mb_substr("ABCDEFG", ($j-1), 1) . (String)$i; ?>
-                                <td class="select" id="<?php echo $idx; ?>"
-                                onclick="selection('<?php echo $idx; ?>')"></td>
+                                <td class="select" id="<?php echo $idx; ?>"></td>
                             <?php } ?>
                         </tr>
                     <?php } ?>
@@ -60,7 +59,7 @@
                     <div id="teki-mes1"></div>
                     <div id="teki-mes2"></div>
                 </section>
-                <button id="set-ship-btn">我が軍の潜水艦を配置する</button>
+                <button id="start-set-btn">あなたの潜水艦を配置する</button>
                 <section class="set-players-ship">
                     <p>
                         あなたの3隻の潜水艦を配置してください。<br>
@@ -71,25 +70,79 @@
                         <div class="clearfix">
                             <div class="ship-name">Odyssey:</div>
                             <div class="ship-cell">
-                                <label for="ody1">1:</label><input type="text" id="ody1">
-                                <label for="ody2">2:</label><input type="text" id="ody2">
-                                <label for="ody3">3:</label><input type="text" id="ody3">
+                                1:<input type="text" id="ody1" list="ody1list">
+                                <datalist id="ody1list">
+                                    <option value=""></option>
+                                    <option value=""></option>
+                                    <option value=""></option>
+                                    <option value=""></option>
+                                </datalist>
+                                2:<input type="text" id="ody2" list="ody2list">
+                                <datalist id="ody2list">
+                                    <option value=""></option>
+                                    <option value=""></option>
+                                    <option value=""></option>
+                                    <option value=""></option>
+                                </datalist>
+                                3:<input type="text" id="ody3" list="ody3list">
+                                <datalist id="ody3list">
+                                    <option value=""></option>
+                                    <option value=""></option>
+                                    <option value=""></option>
+                                    <option value=""></option>
+                                </datalist>
                             </div>
                         </div>
                         <div class="clearfix">
                             <div class="ship-name">Poseidon:</div>
                             <div class="ship-cell">
-                                <label for="pos1">1:</label><input type="text" id="pos1">
-                                <label for="pos2">2:</label><input type="text" id="pos2">
-                                <label for="pos3">3:</label><input type="text" id="pos3">
+                                1:<input type="text" id="pos1" list="pos1list">
+                                <datalist id="pos1list">
+                                    <option value=""></option>
+                                    <option value=""></option>
+                                    <option value=""></option>
+                                    <option value=""></option>
+                                </datalist>
+                                2:<input type="text" id="pos2" list="pos2list">
+                                <datalist id="pos2list">
+                                    <option value=""></option>
+                                    <option value=""></option>
+                                    <option value=""></option>
+                                    <option value=""></option>
+                                </datalist>
+                                3:<input type="text" id="pos3" list="pos3list">
+                                <datalist id="pos3list">
+                                    <option value=""></option>
+                                    <option value=""></option>
+                                    <option value=""></option>
+                                    <option value=""></option>
+                                </datalist>
                             </div>
                         </div>
                         <div class="clearfix">
                             <div class="ship-name">Hermes:</div>
                             <div class="ship-cell">
-                                <label for="her1">1:</label><input type="text" id="her1">
-                                <label for="her2">2:</label><input type="text" id="her2">
-                                <label for="her3">3:</label><input type="text" id="her3">
+                                1:<input type="text" id="her1" list="her1list">
+                                <datalist id="her1list">
+                                    <option value=""></option>
+                                    <option value=""></option>
+                                    <option value=""></option>
+                                    <option value=""></option>
+                                </datalist>
+                                2:<input type="text" id="her2" list="her2list">
+                                <datalist id="her2list">
+                                    <option value=""></option>
+                                    <option value=""></option>
+                                    <option value=""></option>
+                                    <option value=""></option>
+                                </datalist>
+                                3:<input type="text" id="her3" list="her3list">
+                                <datalist id="her3list">
+                                    <option value=""></option>
+                                    <option value=""></option>
+                                    <option value=""></option>
+                                    <option value=""></option>
+                                </datalist>
                             </div>
                         </div>
                     </form>
@@ -108,19 +161,6 @@
     </body>
 </html>
 
-                        <!-- <p>Odyssey:<br>
-                             <label for="ody1">cell-1:</label><input type="text" id="ody1">
-                             <label for="ody2">cell-2:</label><input type="text" id="ody2">
-                             <label for="ody3">cell-3:</label><input type="text" id="ody3">
-                             </p>
-                             <p>Poseidon:<br>
-                             <label for="pos1">cell-1:</label><input type="text" id="pos1">
-                             <label for="pos2">cell-2:</label><input type="text" id="pos2">
-                             <label for="pos3">cell-3:</label><input type="text" id="pos3">
-                             </p>
-                             <p>Hermes:<br>
-                             <label for="her1">cell-1:</label><input type="text" id="her1">
-                             <label for="her2">cell-2:</label><input type="text" id="her2">
-                             <label for="her3">cell-3:</label><input type="text" id="her3">
-                             </p> -->
-
+<!--
+onclick="selection('<?php // echo $idx; ?>')"></td>
+-->

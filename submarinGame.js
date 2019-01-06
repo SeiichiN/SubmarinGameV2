@@ -1,3 +1,5 @@
+import * as myList from './selectCell.js';
+
 /**
  * Submarin -- 潜水艦ゲーム
  * @summery:
@@ -151,6 +153,7 @@ class GameHelper {
 function checkYourGuess(guess) {
     numOfGuess++;
 
+    console.log(guess);
     guess = guess.toUpperCase();
 
     let result = new Map();
@@ -193,7 +196,7 @@ function checkUsedCell(cell) {
  *           画面に「命中」とかの表示をする。
  * @param: ユーザの入力したセル（文字列 ex.'B3'）
  */
-function selection(cell) {
+export function selection(cell) {
 
     if (numOfSubmarin === 0) return false;
     if (checkUsedCell(cell)) return false;
@@ -290,22 +293,18 @@ function selection(cell) {
 }
 
 /**
- * ここでonclickの設定をしてもうまくいかなかった。
- * しかたないので、htmlの中にonclickを入れた。
- * だから、この関数は使っていない。
+ * テーブルの各TD要素には class="select" id="A1" などとしてある。
+ * クラス名を指定して、そのクラスの要素全てを取得し、それぞれに
+ * クリック時の関数をセットした。
  */
 function play() {
 
-    const alpha = "ABCDEFG";
     let al = "";
 
-    for (let i = 0; i < 7; i++) {
-        al = alpha.substr(i, 1);
-        for (let j = 1; j <= 7; j++) {
-            cell = al + j.toString();
-            // console.log(cell);
-            document.getElementById(cell).onclick = selection; // (cell);
-        }
+    const cells = document.getElementsByClassName('select');
+    
+    for (let cell of cells) {
+        cell.onclick = (() => { selection(cell.id) });
     }
 }
 
@@ -573,101 +572,78 @@ class Robo {
         this.hasEnemy();
 
         if (this.lockOnMode) {
-            this.newTarget = this.thinkTarget(name, target);
+            this.newTarget = this.thinkTarget(target);
             console.log('newTarget: ' + this.newTarget);
         }
            
         return result;
     }
 
-    thinkTarget(name, target) {
+    thinkTarget(target) {
         let newTarget = "";
         switch (this.lockOnNum) {
             case 1:
                 let nowIdx = this.orgArea.indexOf(target);
-                if (newTarget = this.getNextTarget(this.orgArea[nowIdx - 7])) {
+                // 左のセルが攻撃可能ならばそのセルで決定
+                if (nowIdx - GRID_LENGTH >= 0 &&
+                    (newTarget = this.getNextTarget(this.orgArea[nowIdx - GRID_LENGTH]))) {
                     // console.log('L' + this.lockOnNum +': ' + newTarget);
                     return newTarget;
-                } 
-                if (newTarget = this.getNextTarget(this.orgArea[nowIdx - 1])) {
+                }
+                // 上のセルが攻撃可能ならばそのセルで決定
+                if (nowIdx - 1 >= 0 &&
+                    (newTarget = this.getNextTarget(this.orgArea[nowIdx - 1]))) {
                     // console.log('U' + this.lockOnNum +': ' + newTarget);
                     return newTarget;
-                } 
-                if (newTarget = this.getNextTarget(this.orgArea[nowIdx + 7])) {
+                }
+                // 右のセルが攻撃可能ならばそのセルで決定
+                if (nowIdx + GRID_LENGTH < GRID_SIZE &&
+                    (newTarget = this.getNextTarget(this.orgArea[nowIdx + GRID_LENGTH]))) {
                     // console.log('R' + this.lockOnNum +': ' + newTarget);
                     return newTarget;
-                } 
-                if (newTarget = this.getNextTarget(this.orgArea[nowIdx + 1])) {
+                }
+                // 下のセルが攻撃可能ならばそのセルで決定
+                if (nowIdx + 1 < GRID_SIZE &&
+                    (newTarget = this.getNextTarget(this.orgArea[nowIdx + 1]))) {
                     // console.log('D' + this.lockOnNum +': ' + newTarget);
                     return newTarget;
                 }
                 break;
             case 2:
-                // console.log('1:' + this.orgTarget + ' 2:' + this.secTarget);
+                // 1回目の命中のindex
                 let firstIndex = this.orgArea.indexOf(this.orgTarget);
+                // 2回目の命中のindex
                 let secondIndex = this.orgArea.indexOf(this.secTarget);
-                // console.log('1:' + firstIndex + ' 2:' + secondIndex);
+                // 2つのうち、大きいほうと小さいほうを決定
                 let small = Math.min(firstIndex, secondIndex);
                 let large = Math.max(firstIndex, secondIndex);
 
+                // もしも上下の配置なら
                 if (large - small === 1) {
-                    if (newTarget = this.getNextTarget(this.orgArea[small - 1])) {
+                    // 上のセルが攻撃可能ならそのセルで決定
+                    if (small - 1 >= 0 &&
+                        (newTarget = this.getNextTarget(this.orgArea[small - 1]))) {
                         return newTarget;
                     }
-                    else if (newTarget = this.getNextTarget(this.orgArea[large + 1])) {
-                        return newTarget;
-                    }
-                }
-                if (large - small === 7) {
-                    if (newTarget = this.getNextTarget(this.orgArea[small - 7])) {
-                        return newTarget;
-                    }
-                    else if (newTarget = this.getNextTarget(this.orgArea[large + 7])) {
+                    // 下のセルが攻撃可能ならそのセルで決定
+                    if (large + 1 < GRID_SIZE &&
+                        (newTarget = this.getNextTarget(this.orgArea[large + 1]))) {
                         return newTarget;
                     }
                 }
-                
-                
-                /* if (firstIndex - secondIndex === 1) {
-                 *     if (newTarget = this.getNextTarget(this.upperCell(this.secTarget))) {
-                 *         // console.log('U' + this.lockOnNum +': ' + newTarget);
-                 *         return newTarget;
-                 *     }
-                 *     if (newTarget = this.getNextTarget(this.lowerCell(this.orgTarget))) {
-                 *         // console.log('D' + this.lockOnNum +': ' + newTarget);
-                 *         return newTarget;
-                 *     }
-                 * }
-                 * else if (firstIndex - secondIndex === -1) {
-                 *     if (newTarget = this.getNextTarget(this.upperCell(this.orgTarget))) {
-                 *         // console.log('U' + this.lockOnNum +': ' + newTarget);
-                 *         return newTarget;
-                 *     }
-                 *     if (newTarget = this.getNextTarget(this.lowerCell(this.secTarget))) {
-                 *         // console.log('D' + this.lockOnNum +': ' + newTarget);
-                 *         return newTarget;
-                 *     }
-                 * }
-                 * else if (firstIndex - secondIndex === 7) {
-                 *     if (newTarget = this.getNextTarget(this.leftCell(this.secTarget))) {
-                 *         // console.log('L' + this.lockOnNum +': ' + newTarget);
-                 *         return newTarget;
-                 *     }
-                 *     if (newTarget = this.getNextTarget(this.rightCell(this.orgTarget))) {
-                 *         // console.log('L' + this.lockOnNum +': ' + newTarget);
-                 *         return newTarget;
-                 *     }
-                 * }
-                 * else if (firstIndex - secondIndex === -7) {
-                 *     if (newTarget = this.getNextTarget(this.leftCell(this.orgTarget))) {
-                 *         // console.log('L' + this.lockOnNum +': ' + newTarget);
-                 *         return newTarget;
-                 *     }
-                 *     if (newTarget = this.getNextTarget(this.rightCell(this.secTarget))) {
-                 *         // console.log('L' + this.lockOnNum +': ' + newTarget);
-                 *         return newTarget;
-                 *     }
-                 * }*/
+                // もしも左右の配置なら
+                if (large - small === GRID_LENGTH) {
+                    // 左のセルが攻撃可能ならそのセルで決定
+                    if (small - GRID_LENGTH >= 0 &&
+                        (newTarget = this.getNextTarget(this.orgArea[small - GRID_LENGTH]))) {
+                        return newTarget;
+                    }
+                    // 右のセルが攻撃可能ならそのセルで決定
+                    if (large + GRID_LENGTH < GRID_SIZE &&
+                        (newTarget = this.getNextTarget(this.orgArea[large + GRID_LENGTH]))) {
+                        return newTarget;
+                    }
+                }
                 break;
         }  
     }
@@ -690,42 +666,9 @@ class Robo {
         }
     }
 
-    /* leftCell(target) {
-     *     const indexTarget = this.orgArea.indexOf(target);
-     *     const newIndex = indexTarget - 7;
-     *     if (newIndex >= 0) {
-     *         return this.orgArea[newIndex];
-     *     }
-     *     return false;
-     * }
-
-     * rightCell(target) {
-     *     const indexTarget = this.orgArea.indexOf(target);
-     *     const newIndex = indexTarget + 7;
-     *     if (newIndex < 49) {
-     *         return this.orgArea[newIndex];
-     *     }
-     *     return false;
-     * }
-
-     * upperCell(target) {
-     *     const indexTarget = this.orgArea.indexOf(target);
-     *     const newIndex = indexTarget - 1;
-     *     if (newIndex >= 0) {
-     *         return this.orgArea[newIndex];
-     *     }
-     *     return false;
-     * }
-     *     
-     * lowerCell(target) {
-     *     const indexTarget = this.orgArea.indexOf(target);
-     *     const newIndex = indexTarget + 1;
-     *     if (newIndex < 49) {
-     *         return this.orgArea[newIndex];
-     *     }
-     *     return false;
-     * }*/
-
+    /**
+     * 現在の攻撃可能エリアを検討する
+     */
     considerArea() {
         const area =
             this.area.filter(x => 
@@ -737,60 +680,84 @@ class Robo {
         return area;
     }
 
+    /**
+     * 攻撃済みのセルでも、そこが命中したセルなら、
+     * それが隣にあるセルは攻撃可能セルにカウントできる
+     *
+     * this.shipArea -- Array 命中したセル
+     */
     hasEnemy(ele) {
         console.log('hasEnemy:' + this.shipArea);
         const p = this.orgArea.indexOf(ele);
-        if ((p-7 >= 0 && this.shipArea.indexOf(this.orgArea[p-7])) ||
-            ((p-7 >= 0 && this.shipArea.indexOf(this.orgArea[p-7])) &&
-             (p-14 >= 0 && this.shipArea.indexOf(this.orgArea[p-14]))) ||
-            (p+7 < 49 && this.shipArea.indexOf(this.orgArea[p+7])) ||
-            ((p+7 < 49 && this.shipArea.indexOf(this.orgArea[p+7])) &&
-             (p+14 < 49 && this.shipArea.indexOf(this.orgArea[p+14]))) ||
-            (p-1 >= 0 && this.shipArea.indexOf(this.orgArea[p-1])) ||
-            ((p-1 >= 0 && this.shipArea.indexOf(this.orgArea[p-1])) &&
-             (p-2 >= 0 && this.shipArea.indexOf(this.orgArea[p-2]))) ||
-            (p+1 < 49 && this.shipArea.indexOf(this.orgArea[p+1])) ||
-            ((p+1 < 49 && this.shipArea.indexOf(this.orgArea[p+1])) &&
-             (p+2 < 49 && this.shipArea.indexOf(this.orgArea[p+2])))) {
+        // 左に命中セルがあるか
+        let leftIdx = p - GRID_LENGTH;
+        let leftCell = this.orgArea[leftIdx];
+        if (leftIdx >= 0 &&
+            this.shipArea.find(x => x === leftCell)) {
             return true;
         }
-        else {
-            return false;
+        // 右に命中セルがあるか
+        let rightIdx = p + GRID_LENGTH;
+        let rightCell = this.orgArea[rightIdx];
+        if (rightIdx < GRID_SIZE &&
+            this.shipArea.find(x => x === rightCell)) {
+            return true;
         }
+        // 上に命中セルがあるか
+        let upIdx = p - 1;
+        let upCell = this.orgArea[upIdx];
+        if (upIdx >= 0 &&
+            this.shipArea.find(x => x === upCell)) {
+            return true;
+        }
+        // 下に命中セルがあるか
+        let downIdx = p + 1;
+        let downCell = this.orgArea[downIdx];
+        if (downIdx < GRID_SIZE &&
+            this.shipArea.find(x => x === downCell)) {
+            return true;
+        }
+        return false;
     }
+    // 左右に攻撃可能セルがある
     hasX(ele) {
         const p = this.orgArea.indexOf(ele);
-		if (p-7 < 0 || p+7 > 48) return false;
-        if (this.area.indexOf(this.orgArea[p-7]) === -1 ||
-            this.area.indexOf(this.orgArea[p+7]) === -1 ) {
+        // 左右が 7x7 の中にあるかどうか
+		if (p - GRID_LENGTH < 0 || p + GRID_LENGTH > 48) return false;
+        // 左右のセルが攻撃可能セルのなかに無ければ、そのセルはすでに攻撃済みである
+        if (this.area.indexOf(this.orgArea[p - GRID_LENGTH]) === -1 ||
+            this.area.indexOf(this.orgArea[p + GRID_LENGTH]) === -1 ) {
             return false;
         } else {
             return true;
         }
     }
+    // 左2つのセルが攻撃可能セルであるか
     hasL(ele) {
         const p = this.orgArea.indexOf(ele);
-		if (p-7 < 0) return false;
-        if (this.area.indexOf(this.orgArea[p-7]) === -1 ||
-            this.area.indexOf(this.orgArea[p-14]) === -1 ) {
+		if (p - GRID_LENGTH < 0) return false;
+        if (this.area.indexOf(this.orgArea[p - GRID_LENGTH]) === -1 ||
+            this.area.indexOf(this.orgArea[p - GRID_LENGTH * 2]) === -1 ) {
             return false;
         } else {
             return true;
         }
     }
+    // 右2つのセルが攻撃可能セルであるか
     hasR(ele) {
         const p = this.orgArea.indexOf(ele);
-		if (p+7 > 48) return false;
-        if (this.area.indexOf(this.orgArea[p+7]) === -1 ||
-            this.area.indexOf(this.orgArea[p+14]) === -1 ) {
+		if (p + GRID_LENGTH >= GRID_SIZE) return false;
+        if (this.area.indexOf(this.orgArea[p + GRID_LENGTH]) === -1 ||
+            this.area.indexOf(this.orgArea[p + GRID_LENGTH * 2]) === -1 ) {
             return false;
         } else {
             return true;
         }
     }
+    // 上下2つのセルが攻撃可能セルであるか
     hasY(ele) {
         const p = this.orgArea.indexOf(ele);
-		if (p-1 < 0 || p+1 > 48) return false;
+		if (p-1 < 0 || p+1 >= GRID_SIZE) return false;
         if (this.area.indexOf(this.orgArea[p-1]) === -1 ||
             this.area.indexOf(this.orgArea[p+1]) === -1 ) {
             return false;
@@ -798,6 +765,7 @@ class Robo {
             return true;
         }
     }
+    // 上2つのセルが攻撃可能セルであるか
     hasU(ele) {
         const p = this.orgArea.indexOf(ele);
 		if (p-1 < 0) return false;
@@ -808,9 +776,10 @@ class Robo {
             return true;
         }
     }
+    // 下2つのセルが攻撃可能セルであるか
     hasD(ele) {
         const p = this.orgArea.indexOf(ele);
-		if (p+1 > 48) return false;
+		if (p+1 >= GRID_SIZE) return false;
         if (this.area.indexOf(this.orgArea[p+1]) === -1 ||
             this.area.indexOf(this.orgArea[p+2]) === -1 ) {
             return false;
@@ -845,33 +814,33 @@ function howto() {
  * ユーザーに潜水艦の位置をセットしてもらう
  */
 function setUserShip() {
-    const setBtn = document.getElementById('set-ship-btn');
+    const startSetBtn = document.getElementById('start-set-btn');
     const setOk = document.getElementById("set-ok");
     
     const setShipArea = document.getElementsByClassName('set-players-ship')[0];
     setShipArea.setAttribute('style','display: none;');
 
-    setBtn.onclick = (() => {
-        setBtn.setAttribute('style','display: none;');
+    startSetBtn.onclick = (() => {
+        startSetBtn.setAttribute('style','display: none;');
         setShipArea.setAttribute('style','display: block;');
     });
     setOk.onclick = (() => {
 
-        const ody1 = document.getElementById("ody1").value.toUpperCase();
-        const ody2 = document.getElementById("ody2").value.toUpperCase();
-        const ody3 = document.getElementById("ody3").value.toUpperCase();
-        const pos1 = document.getElementById("pos1").value.toUpperCase();
-        const pos2 = document.getElementById("pos2").value.toUpperCase();
-        const pos3 = document.getElementById("pos3").value.toUpperCase();
-        const her1 = document.getElementById("her1").value.toUpperCase();
-        const her2 = document.getElementById("her2").value.toUpperCase();
-        const her3 = document.getElementById("her3").value.toUpperCase();
-
+        let ody1 = myList.ody1.value;
+        let ody2 = myList.ody2.value;
+        let ody3 = myList.ody3.value;
+        let pos1 = myList.pos1.value;
+        let pos2 = myList.pos2.value;
+        let pos3 = myList.pos3.value;
+        let her1 = myList.her1.value;
+        let her2 = myList.her2.value;
+        let her3 = myList.her3.value;
+        
         odyssey = [ody1, ody2, ody3];
         poseidon = [pos1, pos2, pos3];
         hermes = [her1, her2, her3];
 
-        setBtn.setAttribute('style','display: block;');
+        startSetBtn.setAttribute('style','display: block;');
         setShipArea.setAttribute('style','display: none;');
         roboInit();
     });
@@ -922,5 +891,5 @@ window.onload = (() => {
     setUserShip();
     roboInit();           // 敵（ロボ）の攻撃準備
     howto();
-    // play(); //  <== onclickをスクリプト内に入れるにはどうすればいいか？
+    play(); 
 });
