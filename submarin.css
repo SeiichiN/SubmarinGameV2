@@ -68,6 +68,25 @@ td {
     display: none;
 }
 
+#kekka {
+    width: 120px;
+}
+
+#kekka-illust {
+    float: right;
+    width: 172px;
+}
+
+.dotComX {
+    background-image: url(submarin.png);
+	background-repeat: no-repeat;
+	background-position: right center;
+    width: 100px;
+    color: #f00;
+    font-weight: bold;
+    text-align: center;
+}    
+
 #players-set {
     width: 270px;
 }
@@ -85,6 +104,15 @@ td {
     float: right;
 }
 
+.kekka-ship {
+    background-image: url(submarin.png);
+	background-repeat: no-repeat;
+	background-position: right center;
+    width: 100px;
+    color: #f00;
+    font-weight: bold;
+    text-align: center;
+}    
 
 @media screen and (min-width: 768px) {
     #wrap {

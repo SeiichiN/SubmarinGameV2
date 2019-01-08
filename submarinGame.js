@@ -11,7 +11,8 @@ import * as myRobo from './robo.js';
  *   それが潜水艦の大きさとなる。
  *   （例）[2, 3, 4]
  *   ユーザーは、何番目のマス目に潜水艦があるかを当てる。
- *   3つ当たれば「撃沈」となる。 * 
+ *   3つ当たれば「撃沈」となる。
+ * @Author: Seiichi Nukayama
  */
 class Submarin {
     constructor() {
@@ -102,10 +103,10 @@ class GameHelper {
             incr = GRID_LENGTH;
         } 
 
-        // location には、0 〜 48 の数字がはいる。
+        // location には、0 ? 48 の数字がはいる。
         // coords は、潜水艦(セル３つ分)。候補となるlocation番号を保持する。
         while (success === false && attempts++ < 200) {
-            // 0〜48のどれかをランダムに選ぶ
+            // 0?48のどれかをランダムに選ぶ
             location = Math.floor(Math.random() * GRID_SIZE);
             success = true;
             x = 0;
@@ -134,7 +135,7 @@ class GameHelper {
         let row = 0;
         let col = 0;
         while (x < subSize) {
-            // coords[x]には、0 〜 48 の数字が格納されている。
+            // coords[x]には、0 ? 48 の数字が格納されている。
             this.grid[coords[x]] = 1;  // そのセルを使用済みとする。
             row = Math.floor(coords[x] / GRID_LENGTH);   // 縦番号
             col = coords[x] % GRID_LENGTH;               // 横番号
@@ -234,10 +235,42 @@ function selection(cell) {
         tekiMes2.textContent = "";
         tekiKekka.textContent = "";
         replay.setAttribute("style", "display: none");
+        kiroku('all', 0);
+        kekka_clear();
         init();
+        setUserShip();
         roboInit();
+        // ユーザーの命中された数はクロージャを使っている。
+        countDamage = makeCountDamage();
+        play();
     });
 
+	function kiroku(name, c) {
+		const ship = {SeaTiger: 0, Papiyon: 1, Mermaid: 2};
+        let ele1 = {};
+        let ele2 = {};
+        // ship[name] -- 0,1,2 が入る
+        if (Object.keys(ship).find(x => x === name)) {
+		    ele1 = document.getElementsByClassName('dotComName')[ship[name]];
+		    ele2 = document.getElementsByClassName('dotComX')[ship[name]];
+		    ele1.textContent = name;
+		    ele2.textContent = " X".repeat(c);
+ 		    ele2.setAttribute('style', 'display: inline-block');
+        }
+        else if (name === "all" && c === 0) {
+            // x -- 'SeaTiger', 'Papiyon', 'Mermaid' が入る
+            Object.keys(ship).map(x => {
+		        ele1 = document.getElementsByClassName('dotComName')[ship[x]];
+		        ele2 = document.getElementsByClassName('dotComX')[ship[x]];
+                ele1.textContent = "";
+                ele2.textContent = "";
+		        ele2.setAttribute('style', 'display: none');
+            });
+        }
+	}
+
+	let dotShip = "";
+	let tar = {};
     let hit = false;
     for (const [k, v] of res) {
         switch(v) {
@@ -249,6 +282,10 @@ function selection(cell) {
                     {opacity: 1, backgroundColor: "#f00"},
                     {opacity: 1, backgroundColor: "#fff"}
                 ], { duration: 1000 });
+                tar = submarinList.filter(x => x.name === k);
+                console.log(tar[0].numOfHits);
+                console.log(k);
+                kiroku(k, tar[0].numOfHits);
                 break;
             case "撃沈":
  		        ele.textContent = "@";
@@ -258,6 +295,7 @@ function selection(cell) {
                     {opacity: 1, backgroundColor: "#f00"},
                     {opacity: 1, backgroundColor: "#fff"}
                 ], { duration: 1000, iterations: 2 });
+				kiroku(k, 3);
                 break;
             default:
                 ele.textContent = "x";
@@ -270,6 +308,7 @@ function selection(cell) {
         }
         if (hit) break;
     }
+    
                 
     if (numOfSubmarin === 0) {
         message1.textContent = "おめでとう。全て撃沈しました。";
@@ -282,15 +321,24 @@ function selection(cell) {
         let mykekka = document.getElementById(idname);
         let mark = "X".repeat(times);
         mykekka.textContent = mark;
-        mykekka.setAttribute('style', 'color: #f00', 'fontWeight: bold');
+        mykekka.setAttribute('style', 'display: inline-block;');
+    }
+
+    // ユーザーの命中した潜水艦の画像を見えなくする。
+    function kekka_clear() {
+        let myShipArea = document.getElementsByClassName('kekka-ship');
+        console.log(myShipArea);
+        for (let x = 0; x < myShipArea.length; x++) {
+            myShipArea[x].setAttribute('style', 'display: none;');
+        }
     }
 
     // 敵の攻撃
     let tekiHit = false;
     let damage;
-
+    
     for (const [n, s] of roboResult) {
-        let idname = 'kekka-'+ n.substr(0, 3);
+        let idname = 'kekka-' + n.substr(0, 3);
         switch(s) {
             case "命中":
                 tekiKekka.textContent = "敵の攻撃が " + n + " に命中。";
@@ -299,7 +347,7 @@ function selection(cell) {
                     {opacity: 1, backgroundColor: "#fff"}
                 ], { duration: 1000 });
                 damage = countDamage(n);
-                kekka_myship(idname, damage[n] );
+                kekka_myship(idname, damage[n]);
                 tekiHit = true;
                 break;
             case "撃沈":
@@ -308,9 +356,9 @@ function selection(cell) {
                     {opacity: 1, backgroundColor: "#f00"},
                     {opacity: 1, backgroundColor: "#fff"}
                 ], { duration: 1000, iterations: 2 });
-                tekiHit = true;
                 damage = countDamage(n);
                 kekka_myship(idname, damage[n]);
+                tekiHit = true;
                 break;
             default:
                 tekiKekka.textContent = "敵の攻撃が失敗。";
@@ -349,7 +397,7 @@ function play() {
 }
 
 /**
- * HTMLの<table>の<td>の'#A1'〜'#G7'までのセルに'.'を入れる
+ * HTMLの<table>の<td>の'#A1'?'#G7'までのセルに'.'を入れる
  */
 function initCells() {
     const alpha = "ABCDEFG";
@@ -445,6 +493,8 @@ function writeShip(idname, loc) {
     userShip.textContent = loc.join(" ");
 }
 
+// roboの攻撃結果を判定する
+// @param: String gs -- インスタンス robo から受け取った文字列 
 function checkRoboGuess(gs) {
     roboNumOfGuess++;
 
@@ -468,7 +518,8 @@ function checkRoboGuess(gs) {
         // 潜水艦の数を1つ減らす。
         myNumOfSubmarin--;
     }
-    
+
+    // 判定結果を インスタンスrobo に返す
     return result;
 }
 
@@ -532,7 +583,7 @@ function setUserShip() {
 }
 
 let makeCountDamage = function() {
-    var damage = {
+    let damage = {
         Odyssey: 0,
         Poseidon: 0,
         Hermes: 0
@@ -583,7 +634,6 @@ let poseidon = [];
 let hermes = [];
 
 let countDamage = makeCountDamage();
-
 
 window.onload = (() => {
     init();               // プレーヤー側の攻撃準備

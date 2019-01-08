@@ -9,17 +9,17 @@
     </head>
     <body>
         <div id="wrap">
-			<aside class="des">
+			<aside class="des" id="des-howto-play">
                 <header class="clearfix">
                     <img id="close-des" src="close.gif" alt="close">
                     <h1>あそびかた</h1>
                 </header>
 				<p>この海域には、敵潜水艦が3隻潜んでいます。<br>
-				潜水艦は、1隻で3つのセルを占有しています。<br>
-				あなたに課せられた任務は、敵潜水艦を全隻撃沈することです。<br>
-				49個の各セルをマウス（指）でクリックすることで、敵潜水艦を攻撃できます。
-				もし、20回以下の攻撃で任務を完了することができれば、優秀といえます。<br>
-				さあ、頑張ってください。</p>
+				    潜水艦は、1隻で3つのセルを占有しています。<br>
+				    あなたに課せられた任務は、敵潜水艦を全隻撃沈することです。<br>
+				    49個の各セルをマウス（指）でクリックすることで、敵潜水艦を攻撃できます。
+				    もし、20回以下の攻撃で任務を完了することができれば、優秀といえます。<br>
+				    さあ、頑張ってください。</p>
 			</aside>
             <header>
                 <h1>潜水艦ゲーム</h1>
@@ -49,6 +49,23 @@
 
                 </table>
                 <section class="score">
+                	<div id="kekka-illust">
+                		<div class="dotCom" id="dotCom1">
+                			<span class="dotComName"></span><!-- SeaTiger -->
+                			<span class="dotComKekka"></span>
+                            <span class="dotComX"></span>
+                		</div>
+                		<div class="dotCom" id="dotCom2">
+                			<span class="dotComName"></span><!-- Papiyon -->
+                			<span class="dotComKekka"></span>
+                            <span class="dotComX"></span>
+                		</div>
+                		<div class="dotCom" id="dotCom3">
+                			<span class="dotComName"></span><!-- Mermaid -->
+                			<span class="dotComKekka"></span>
+                            <span class="dotComX"></span>
+                		</div>
+                	</div>
                     <p id="kekka"></p>
                     <div id="mes1"></div>
                     <div id="mes2"></div>
@@ -149,18 +166,20 @@
                     <button id="set-ok">決定</button>
                 </section>
                 <section id="players-ship">
-                    <div>Oddysey &nbsp;&nbsp;      : <span id="ship1"></span><span id="kekka-Ody"></span></div>
-                    <div>Poseidon &nbsp;           : <span id="ship2"></span><span id="kekka-Pos"></span></div>
-                    <div>Hermes &nbsp;&nbsp;&nbsp; : <span id="ship3"></span><span id="kekka-Her"></span></div>
+                    <div>Oddysey &nbsp;&nbsp;      : <span id="ship1"></span>
+                        &nbsp;<span class="kekka-ship" id="kekka-Ody"></span>
+                    </div>
+                    <div>Poseidon &nbsp;           : <span id="ship2"></span>
+                        &nbsp;<span class="kekka-ship" id="kekka-Pos"></span>
+                    </div>
+                    <div>Hermes &nbsp;&nbsp;&nbsp; : <span id="ship3"></span>
+                        &nbsp;<span class="kekka-ship" id="kekka-Her"></span>
+                    </div>
                 </section>
             </article>
             <footer>
                 <small>&copy; 2018 Seiichi Nukayama</small>
             </footer>
-        </div>
+        </div><!-- #wrap -->
     </body>
 </html>
-
-<!--
-onclick="selection('<?php // echo $idx; ?>')"></td>
--->

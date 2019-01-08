@@ -5,3 +5,6 @@
 *.txt~
 sample2.js
 *.ai
+*org.php
+*org.js
+
