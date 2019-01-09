@@ -1,6 +1,7 @@
 import * as myList from './selectCell.js';
 import * as myRobo from './robo.js';
-
+import * as BilliesWorksSubmarin from './submarin.js';
+import * as BilliesWorksGameHelper from './gameHelper.js';
 
 /**
  * Submarin -- 潜水艦ゲーム
@@ -14,139 +15,8 @@ import * as myRobo from './robo.js';
  *   3つ当たれば「撃沈」となる。
  * @Author: Seiichi Nukayama
  */
-class Submarin {
-    constructor() {
-        // 潜水艦の配置 -- ['B2', 'B3', 'B4']
-        this.locationCells = [];
-        // 潜水艦の大きさ -- 要素数
-        this.length = 0;
-        // 命中した数 -- 3で撃沈
-        this.numOfHits = 0;   // 使っていない
-        // 潜水艦の名前
-        this.name = "none";
-        // 反応
-        this.result = "";
-    }
 
-    // @summery: 配置を決める
-    // @param: locs -- ['B2', 'B3', 'B4'] などの配列
-    setLocationCells(locs) {
-        this.locationCells = locs;
-        this.length = this.locationCells.length;
-    }
 
-    setName(name) {
-        this.name = name;
-    }
-
-    getName() {
-        return this.name;
-    }
-
-    // @ デバッグ用に潜水艦の位置を表示するメソッド
-    getLocationCells() {
-        return this.locationCells.reduce((a, x) => a += x, "");
-    }
-
-    // @summery: ユーザーからの攻撃に対する判定処理
-    // @param:  String guess -- ユーザーからの攻撃。 2 とか、3とか。
-    checkYourself(guess) {
-        this.result = '失敗';
-
-        let newCells = this.locationCells.map(x => {
-            let s = "";
-            if (x === guess) {
-                this.result = '命中';
-                this.numOfHits++;
-            } else {
-                s = x;
-            }
-            if (this.numOfHits === 3) {
-                this.result = '撃沈';
-            }
-            return s;
-        });
-            
-        this.locationCells = newCells;
-
-        return this.result;
-    }
-}
-
-class GameHelper {
-    
-    constructor () {
-        this.grid = [];
-        for (let i=0; i < GRID_SIZE; i++) {
-            this.grid[i] = 0;
-        }
-        this.subCount = 0;
-    }
-
-    // @summery: 潜水艦の配置セルを提案する
-    // @param: int subSize -- 潜水艦の大きさ
-    locateSubmarin(subSize) {
-        let alphaCells = [];
-        let alphaCoords = [];  // "a3"などのコードを保持する
-        let success = false;   // 配置が適切かどうかを示す
-        let attempts = 0;      // 試行回数のカウンタ
-        let location = 0;      // 検討対象のセル
-        let coords = [];       // 候補となる海域セル番号を保持する
-                               // 潜水艦が保持
-        let incr = 1;          // 配置を決めるときのセルの増加分
-        let x = 0;             // 潜水艦の大きさ（カウンタ用）
-
-        this.subcount++;
-
-        let i = Math.floor(Math.random() * 30);
-        if ((i % 2) === 1) {
-            incr = GRID_LENGTH;
-        } 
-
-        // location には、0 ? 48 の数字がはいる。
-        // coords は、潜水艦(セル３つ分)。候補となるlocation番号を保持する。
-        while (success === false && attempts++ < 200) {
-            // 0?48のどれかをランダムに選ぶ
-            location = Math.floor(Math.random() * GRID_SIZE);
-            success = true;
-            x = 0;
-            // 潜水艦の大きさが subSize -- 3 以下ならば
-            while (success === true && x < subSize) {
-                // その海域がまだ不使用ならば
-                if (this.grid[location] === 0) {
-                    coords[x] = location;  // この海域番号を保持する。
-                    x++;
-                    location += incr;      // 次の海域セル
-                    // そのセルが全海域サイズよりも大きければ
-                    if (location >= GRID_SIZE) {
-                        success = false;
-                    }
-                    // そのセルが7で割り切れるということは、はみ出ているということ
-                    if (x > 0 && location % GRID_LENGTH === 0) {
-                                            success = false;
-                    }
-                } else {             // その海域は使用済み(1)
-                    success = false;
-                }
-            }
-        }
-
-        x = 0;      // 潜水艦の大きさ（セルの数）
-        let row = 0;
-        let col = 0;
-        while (x < subSize) {
-            // coords[x]には、0 ? 48 の数字が格納されている。
-            this.grid[coords[x]] = 1;  // そのセルを使用済みとする。
-            row = Math.floor(coords[x] / GRID_LENGTH);   // 縦番号
-            col = coords[x] % GRID_LENGTH;               // 横番号
-            let alpha = ALPHABET.charAt(col);
-            alphaCells[coords[x]] = alpha + (row + 1);
-            alphaCoords[x] = alphaCells[coords[x]];
-            x++;
-        }
-        return alphaCoords;
-    }
-}
 
 /**
  * @summery: 'B4'などのセル指定の結果を得る
@@ -156,7 +26,7 @@ class GameHelper {
 function checkYourGuess(guess) {
     numOfGuess++;
 
-    console.log(guess);
+    // console.log(guess);
     guess = guess.toUpperCase();
 
     let result = new Map();
@@ -206,12 +76,12 @@ function selection(cell) {
 
     // res -- Map(3) { SeaTiger → "失敗", Papiyon → "命中", Mermaid → "失敗" }
     const res = checkYourGuess(cell);
-    roboResult = roboPlay();
-    console.log(roboResult);
+    roboResult = roboPlay();  // コンピュータの攻撃とその結果
+    // console.log(roboResult);
 
     // デバッグ用
     // console.log(submarinList.map(x => x.getLocationCells()));
-    console.log(res);
+    // console.log(res);
     // console.log(cell);
     
     // ドキュメントに表示する
@@ -283,8 +153,8 @@ function selection(cell) {
                     {opacity: 1, backgroundColor: "#fff"}
                 ], { duration: 1000 });
                 tar = submarinList.filter(x => x.name === k);
-                console.log(tar[0].numOfHits);
-                console.log(k);
+//                console.log(tar[0].numOfHits);
+//                console.log(k);
                 kiroku(k, tar[0].numOfHits);
                 break;
             case "撃沈":
@@ -419,11 +289,11 @@ function init() {
     initCells();
     
     const numOfCells = 3;             // 潜水艦の大きさ
-    const submarin1 = new Submarin();
-    const submarin2 = new Submarin();
-    const submarin3 = new Submarin();
+    const submarin1 = new BilliesWorksSubmarin.Submarin();
+    const submarin2 = new BilliesWorksSubmarin.Submarin();
+    const submarin3 = new BilliesWorksSubmarin.Submarin();
 
-    const game = new GameHelper();
+    const game = new BilliesWorksGameHelper.GameHelper();
 
     loc = game.locateSubmarin(numOfCells);
     submarin1.setLocationCells(loc);
@@ -461,9 +331,9 @@ function roboInit() {
     robo = new myRobo.Robo(name1, name2, name3);
 
     const numOfCells = 3;
-    const mySubmarin1 = new Submarin();
-    const mySubmarin2 = new Submarin();
-    const mySubmarin3 = new Submarin();
+    const mySubmarin1 = new BilliesWorksSubmarin.Submarin();
+    const mySubmarin2 = new BilliesWorksSubmarin.Submarin();
+    const mySubmarin3 = new BilliesWorksSubmarin.Submarin();
 
     console.log(odyssey);
 
@@ -523,7 +393,9 @@ function checkRoboGuess(gs) {
     return result;
 }
 
-
+/**
+ * Robo Play -- コンピュータの攻撃
+ */
 function roboPlay() {
     let target = robo.attack();
     let result = checkRoboGuess(target);

@@ -40,11 +40,36 @@ export class Robo {
         this.area = this.orgArea;
     }
 
+    randomGetTarget() {
+        let length = this.area.length;                    // length = 49
+        return Math.floor(Math.random() * length);   // 0 〜 48
+    }
+
+    checkTarget(cell) {
+        const GRID_SIZE = 49;
+        let idx = this.orgArea.indexOf(cell);
+        let leftCell = (idx - 7 >= 0) ? this.orgArea[idx - 7] : -1 ;
+        let rightCell = (idx + 7 < GRID_SIZE) ? this.orgArea[idx + 7] : -1;
+        let upCell = (idx - 1 >= 0) ? this.orgArea[idx - 1] : -1;
+        let downCell = (idx + 1 < GRID_SIZE) ? this.orgArea[idx + 1] : -1;
+
+        if (this.area.find(x => x === leftCell) &&
+            this.area.find(x => x === rightCell)) {
+            return true;
+        } else if (this.area.find(x => x === upCell) &&
+                   this.area.find(x => x === downCell)) {
+            return true;
+        }
+        return false;
+    }
+    
     attack () {
         let target = "";
         let index = -1;
         
-        console.log('lockOnMode:' + this.lockOnMode);
+        // console.log('lockOnMode:' + this.lockOnMode);
+
+        // lockOnMode === true -- ロックオンモード
         if (this.lockOnMode) {
             target = this.newTarget;
             index = this.area.indexOf(target);
@@ -52,11 +77,16 @@ export class Robo {
         // lockOnMode===true で、新しいtargetをよう見つけなかったら、
         // とりあえずrandomでtargetを決める。
         if (index === -1) {
-            let length = this.area.length;                    // length = 49
-            index = Math.floor(Math.random() * length);   // 0 〜 48
-            target = this.area[index];
+            let cnt = 0;
+            while (! this.checkTarget(target) && cnt < 4) {
+                index = this.randomGetTarget();
+                target = this.area[index];
+                cnt++;
+            }
+            console.log('cnt:' + cnt + ' target:' + target);
+            
         }
-        console.log('Target: ' + target);
+        //console.log('Target: ' + target);
         // targetが見つかったら、処理をいったんsubmarinGame.jsにもどす
         return target;
     }
@@ -144,13 +174,14 @@ export class Robo {
             }
 
         }
-        console.log('lockOnNum:' + this.lockOnNum);
+        // console.log('lockOnNum:' + this.lockOnNum);
 //        console.log(this.enemy);
 //        console.log('orgTar:' + this.orgTarget + ' secTar:' + this.secTarget);
         this.hasEnemy();
 
         if (this.lockOnMode) {
             this.newTarget = this.thinkTarget(target);
+            console.log('lockOnNum:' + this.lockOnNum);
             console.log('newTarget: ' + this.newTarget);
         }
            
@@ -163,26 +194,22 @@ export class Robo {
             case 1:
                 let nowIdx = this.orgArea.indexOf(target);
                 // 左のセルが攻撃可能ならばそのセルで決定
-                if (nowIdx - this.GRID_LENGTH >= 0 &&
-                    (newTarget = this.getNextTarget(this.orgArea[nowIdx - this.GRID_LENGTH]))) {
+                if (newTarget = this.getNextTarget(nowIdx - this.GRID_LENGTH)) {
                     // console.log('L' + this.lockOnNum +': ' + newTarget);
                     return newTarget;
                 }
                 // 上のセルが攻撃可能ならばそのセルで決定
-                if (nowIdx - 1 >= 0 &&
-                    (newTarget = this.getNextTarget(this.orgArea[nowIdx - 1]))) {
+                if (newTarget = this.getNextTarget(nowIdx - 1)) {
                     // console.log('U' + this.lockOnNum +': ' + newTarget);
                     return newTarget;
                 }
                 // 右のセルが攻撃可能ならばそのセルで決定
-                if (nowIdx + this.GRID_LENGTH < this.GRID_SIZE &&
-                    (newTarget = this.getNextTarget(this.orgArea[nowIdx + this.GRID_LENGTH]))) {
+                if (newTarget = this.getNextTarget(nowIdx + this.GRID_LENGTH)) {
                     // console.log('R' + this.lockOnNum +': ' + newTarget);
                     return newTarget;
                 }
                 // 下のセルが攻撃可能ならばそのセルで決定
-                if (nowIdx + 1 < this.GRID_SIZE &&
-                    (newTarget = this.getNextTarget(this.orgArea[nowIdx + 1]))) {
+                if (newTarget = this.getNextTarget(nowIdx + 1)) {
                     // console.log('D' + this.lockOnNum +': ' + newTarget);
                     return newTarget;
                 }
@@ -199,26 +226,22 @@ export class Robo {
                 // もしも上下の配置なら
                 if (large - small === 1) {
                     // 上のセルが攻撃可能ならそのセルで決定
-                    if (small - 1 >= 0 &&
-                        (newTarget = this.getNextTarget(this.orgArea[small - 1]))) {
+                    if (newTarget = this.getNextTarget(small - 1)) {
                         return newTarget;
                     }
                     // 下のセルが攻撃可能ならそのセルで決定
-                    if (large + 1 < this.GRID_SIZE &&
-                        (newTarget = this.getNextTarget(this.orgArea[large + 1]))) {
+                    if (newTarget = this.getNextTarget(large + 1)) {
                         return newTarget;
                     }
                 }
                 // もしも左右の配置なら
                 if (large - small === this.GRID_LENGTH) {
                     // 左のセルが攻撃可能ならそのセルで決定
-                    if (small - this.GRID_LENGTH >= 0 &&
-                        (newTarget = this.getNextTarget(this.orgArea[small - this.GRID_LENGTH]))) {
+                    if (newTarget = this.getNextTarget(small - this.GRID_LENGTH)) {
                         return newTarget;
                     }
                     // 右のセルが攻撃可能ならそのセルで決定
-                    if (large + this.GRID_LENGTH < this.GRID_SIZE &&
-                        (newTarget = this.getNextTarget(this.orgArea[large + this.GRID_LENGTH]))) {
+                    if (newTarget = this.getNextTarget(large + this.GRID_LENGTH)) {
                         return newTarget;
                     }
                 }
@@ -236,12 +259,19 @@ export class Robo {
      *
      * 次の攻撃セルが this.area の中に存在していることが必要
      */
-    getNextTarget(newTarget) {
-        if (newTarget && this.existTarget(newTarget)) {
-            return newTarget;
-        } else {
-            return false;
-        }
+
+    /* getNextTarget(newTarget) {
+     *     if (newTarget && this.existTarget(newTarget)) {
+     *         return newTarget;
+     *     } else {
+     *         return false;
+     *     }
+     * }*/
+
+    getNextTarget(newIndex) {
+        if (newIndex < 0 || newIndex >= this.GRID_SIZE) return false;
+        if (this.existTarget(this.orgArea[newIndex]))  return this.orgArea[newIndex];
+        return false;
     }
 
     /**
